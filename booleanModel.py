@@ -52,7 +52,31 @@ class BooleanModel(object):
         return set([k for k in self.tokens.keys() if self.query in self.tokens[k]])
 
 
+def tokenize(doc):
+    words = doc.split()
+    return [word.translate(None, string.punctuation).lower() for word in words]
+
+
+def match(query, negation=False, docs=docs):
+    tokens = {}
+    for doc in docs:
+        tokens[doc[0]] = tokenize(doc[1])
+    if negation:
+        return set([k for k in tokens.keys() if query.lower() not in tokens[k]])
+    return set([k for k in tokens.keys() if query.lower() in tokens[k]])
+
+
 if __name__ == "__main__":
+    print "Using Fufunctions:"
+    print match("recupero") & match("web")
+    print match("recupero") | match("web")
+    print match("recupero") & match("relitto", negation=True)
+    print (match("web") | match("uso")) & match("strumenti")
+    print (match("uso") | match("web")) & match("strumenti", negation=True)
+    print match("informazioni") & match("relitto") & match("studente")
+    print match("informazioni") | match("relitto") | match("studente")
+    print match("bologna") | match("padova", negation=True)
+    print "Using Objects:"
     print BooleanModel("recupero") & BooleanModel("web")
     print BooleanModel("recupero") | BooleanModel("web")
     print BooleanModel("recupero") & ~BooleanModel("relitto")
