@@ -20,11 +20,11 @@ class BooleanModel(object):
 
     def __init__(self, queryString, docs=docs):
         self.tokens = {}
-        self.docs = docs
-        for doc in self.docs:
-            self.tokens[doc[0]] = self.tokenize(doc[1])
         self.query = queryString
+        self.docs = docs
         self.inverted = False
+        for doc in self.docs:
+            self.tokens[doc[0]] = tokenize(doc[1])
         self.result = set([k for k in self.tokens.keys() if self.query in self.tokens[k]])
 
     def __and__(self, other):
@@ -41,15 +41,6 @@ class BooleanModel(object):
 
     def __str__(self):
         return " ".join(list(self.result))
-
-    def tokenize(self, doc):
-        words = doc.split()
-        return [word.translate(None, string.punctuation).lower() for word in words]
-
-    def docsMatchingQuery(self):
-        if self.inverted:
-            return set([k for k in self.tokens.keys() if self.query not in self.tokens[k]])
-        return set([k for k in self.tokens.keys() if self.query in self.tokens[k]])
 
 
 def tokenize(doc):
