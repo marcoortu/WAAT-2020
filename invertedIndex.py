@@ -103,10 +103,3 @@ def findSequential(invertedIndex={}, query=[]):
         if 1 in docDict[key]:
             retrievedDocs.append(key)
     return retrievedDocs
-
-
-if __name__ == "__main__":
-    invertedIndex = createInvertedIndex(docs=[doc1, doc2, doc3])
-    print find(invertedIndex, ["un", "atto"])
-    print find(invertedIndex, ["un", "animale"])
-    print findSequential(invertedIndex, ["animale", "un"])
