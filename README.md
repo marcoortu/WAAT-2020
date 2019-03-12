@@ -6,7 +6,7 @@ Repository del Corso WAAT AA-2018-19
 
 1. da _Pycharm_ aprire il menù *VCS*->*Checkout From Version Control*->*GitHub*
 2. selezionare _Auth Type_->*password* e inserire le credenziali del vostro account su GitHub 
-3. inserire *https://github.com/marcoortu/WAAT-2018*  nel campo *Git Reposistory Url*
+3. inserire *https://github.com/marcoortu/WAAT-2019*  nel campo *Git Reposistory Url*
 
 oppure da terminale (per utenti esperti):
 
