@@ -30,10 +30,10 @@ doc3 = (
     """
 )
 
-corpus = [doc1, doc2, doc3]
+docs = [doc1, doc2, doc3]
 
 
-def rank(query, corpus=corpus, useTfIdf=False):
+def rank(query, corpus=docs, useTfIdf=False):
     ranking = [(doc[0], cosineSimilarity(('query', query), doc, useTfIdf)) for doc in corpus]
     ranking = sorted(ranking, key=lambda rank: rank[1], reverse=True)
     return ranking
@@ -46,7 +46,7 @@ def cosineSimilarity(document1, document2, useTfIdf=False):
     return vector1.dot(vector2) / normProduct if normProduct else 0
 
 
-def vectorize(document, corpus=corpus, useTfIdf=False):
+def vectorize(document, corpus=docs, useTfIdf=False):
     terms = set([term for doc in corpus for term in tokenize(doc)])
     terms = sorted(terms)
     weightFunction = tfIdfWeight if useTfIdf else binaryWeight
@@ -62,9 +62,58 @@ def binaryWeight(term, document):
     return 1 if term in documentTerms else 0
 
 
-def tfIdfWeight(term, document, corpus=corpus):
+def tfIdfWeight(term, document, corpus=docs):
     documentTerms = tokenize(document)
     corpusTermList = [doc[0] for doc in corpus if term in tokenize(doc)]
     idf = np.log(len(corpus) / len(corpusTermList)) if len(corpusTermList) else 0
     tf = documentTerms.count(term) / len(documentTerms)
     return tf * idf
+
+
+class Document(object):
+
+    def __init__(self, name, text):
+        self.name, self.text = name, text
+
+
+corpus = [Document(doc1[0], doc1[1]),
+          Document(doc2[0], doc2[1]),
+          Document(doc3[0], doc3[1])]
+
+
+class Corpus(object):
+
+    def __init__(self, corpus=corpus):
+        self.corpus = corpus
+        self.terms = set([term for doc in self.corpus for term in self.tokenize(doc)])
+        self.useTfIdf = True
+
+    def vectorize(self, doc):
+        weightFunction = self.tfIdfWeight if self.useTfIdf else self.binaryWeight
+        return np.array([weightFunction(term, doc) for term in self.terms])
+
+    def tokenize(self, doc):
+        return [w.lower() for w in re.split('\W+', doc.text) if w]
+
+    def cosineSimilarity(self, doc1, doc2):
+        vector1 = self.vectorize(doc1)
+        vector2 = self.vectorize(doc2)
+        normProduct = np.linalg.norm(vector1) * np.linalg.norm(vector2)
+        return vector1.dot(vector2) / normProduct if normProduct else 0
+
+    def binaryWeight(self, term, doc):
+        documentTerms = set([word for word in self.tokenize(doc)])
+        return 1 if term in documentTerms else 0
+
+    def tfIdfWeight(self, term, document):
+        documentTerms = self.tokenize(document)
+        corpusTermList = [doc.name for doc in self.corpus if term in self.tokenize(doc)]
+        idf = np.log(len(self.corpus) / len(corpusTermList)) if len(corpusTermList) else 0
+        tf = documentTerms.count(term) / len(documentTerms)
+        return tf * idf
+
+    def rank(self, query):
+        docQuery = Document('', query)
+        ranking = [(doc.name, self.cosineSimilarity(docQuery, doc)) for doc in self.corpus]
+        ranking = sorted(ranking, key=lambda rank: rank[1], reverse=True)
+        return ranking
