@@ -68,10 +68,3 @@ def tfIdfWeight(term, document, corpus=corpus):
     idf = np.log(len(corpus) / len(corpusTermList)) if len(corpusTermList) else 0
     tf = documentTerms.count(term) / len(documentTerms)
     return tf * idf
-
-
-if __name__ == '__main__':
-    useTfIdf = True
-    print rank(query="spada oggetto", useTfIdf=useTfIdf)
-    print rank(query="un che", useTfIdf=useTfIdf)
-    print rank(query="mattina sole", useTfIdf=useTfIdf)
