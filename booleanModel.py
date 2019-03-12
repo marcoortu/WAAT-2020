@@ -22,7 +22,6 @@ class BooleanModel(object):
         self.tokens = {}
         self.query = queryString
         self.docs = docs
-        self.inverted = False
         for doc in self.docs:
             self.tokens[doc[0]] = tokenize(doc[1])
         self.result = set([k for k in self.tokens.keys() if self.query in self.tokens[k]])
@@ -55,6 +54,10 @@ def match(query, negation=False, docs=docs):
     if negation:
         return set([k for k in tokens.keys() if query.lower() not in tokens[k]])
     return set([k for k in tokens.keys() if query.lower() in tokens[k]])
+
+
+
+
 
 
 if __name__ == "__main__":
