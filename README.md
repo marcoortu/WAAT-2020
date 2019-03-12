@@ -17,7 +17,7 @@ doc1 = (
 
 doc2 = (
     "doc2",
-    """Coi che trovate quando tornate a casa il cibo caldo e visi amici 
+    """Voi che trovate quando tornate a casa il cibo caldo e visi amici 
     Considerate se questo è un uomo
     """
 )
