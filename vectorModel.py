@@ -64,9 +64,10 @@ def binaryWeight(term, document):
 
 def tfIdfWeight(term, document, corpus=docs):
     documentTerms = tokenize(document)
-    corpusTermList = [doc[0] for doc in corpus if term in tokenize(doc)]
-    idf = np.log(len(corpus) / len(corpusTermList)) if len(corpusTermList) else 0
-    tf = documentTerms.count(term) / len(documentTerms)
+    corpusList = [doc[0] for doc in corpus if term in tokenize(doc)]
+    maxTermFreq = max([tokenize(doc).count(term) for doc in corpus])
+    idf = np.log(len(corpus) / len(corpusList)) if len(corpusList) else 0
+    tf = documentTerms.count(term) / maxTermFreq
     return tf * idf
 
 
@@ -108,8 +109,9 @@ class Corpus(object):
     def tfIdfWeight(self, term, document):
         documentTerms = self.tokenize(document)
         corpusTermList = [doc.name for doc in self.corpus if term in self.tokenize(doc)]
+        maxTermFreq = max([self.tokenize(doc).count(term) for doc in self.corpus])
         idf = np.log(len(self.corpus) / len(corpusTermList)) if len(corpusTermList) else 0
-        tf = documentTerms.count(term) / len(documentTerms)
+        tf = documentTerms.count(term) / maxTermFreq
         return tf * idf
 
     def rank(self, query):
