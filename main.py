@@ -1,7 +1,7 @@
 from vectorModel import rank, Corpus
 
 if __name__ == "__main__":
-    # print "Using Functions"
+    print "Using Functions"
     useTfIdf = True
     print rank(query="spada oggetto", useTfIdf=useTfIdf)
     print rank(query="un che", useTfIdf=useTfIdf)
