@@ -1,5 +1,6 @@
-# coding=utf-8
 import string
+
+translator = str.maketrans('', '', string.punctuation)
 
 doc1 = (
     "doc1",
@@ -53,7 +54,7 @@ class InvertedIndex(object):
 
     def getIndexOccurence(self, doc):
         words = doc[1].split()
-        words = [word.translate(None, string.punctuation) for word in words]
+        words = [word.translate(translator) for word in words]
         index = []
         for i, word in enumerate(words):
             index.append((word, i + 1))
@@ -62,7 +63,7 @@ class InvertedIndex(object):
 
 def getIndexOccurence(doc):
     words = doc[1].split()
-    words = [word.translate(None, string.punctuation) for word in words]
+    words = [word.translate(translator) for word in words]
     return [(word, i + 1) for i, word in enumerate(words)]
 
 
