@@ -75,7 +75,7 @@ class InvertedIndex(object):
         return retrieved_docs
 
 
-def geti_index_occurence(doc):
+def index_occurence(doc):
     words = doc[1].split()
     words = [word.translate(translator) for word in words]
     return [(word, i + 1) for i, word in enumerate(words)]
@@ -84,7 +84,7 @@ def geti_index_occurence(doc):
 def create_inverted_index(docs=[]):
     inverted_index = {}
     for doc in docs:
-        for index in geti_index_occurence(doc):
+        for index in index_occurence(doc):
             if index[0] in inverted_index.keys():
                 inverted_index[index[0]].append((doc[0], index[1]))
             else:
