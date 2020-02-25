@@ -1,4 +1,5 @@
 import string
+from collections import defaultdict
 
 translator = str.maketrans('', '', string.punctuation)
 
@@ -34,17 +35,14 @@ doc4 = (
 class InvertedIndex(object):
 
     def __init__(self, docs):
-        self.inverted_indexes = {}
+        self.inverted_indexes = defaultdict(list)
         for doc in docs:
             index = self.get_index_occurence(doc)
             self.update(index, doc[0])
 
     def update(self, indexes, doc_name):
         for index in indexes:
-            if index[0] in self.inverted_indexes.keys():
-                self.inverted_indexes[index[0]].append((doc_name, index[1]))
-            else:
-                self.inverted_indexes[index[0]] = [(doc_name, index[1])]
+            self.inverted_indexes[index[0]].append((doc_name, index[1]))
 
     def __str__(self):
         return str(self.inverted_indexes)
@@ -53,35 +51,25 @@ class InvertedIndex(object):
         return iter(self.inverted_indexes.items())
 
     def get_index_occurence(self, doc):
-        words = doc[1].split()
-        words = [word.translate(translator) for word in words]
-        index = []
-        for i, word in enumerate(words):
-            index.append((word, i + 1))
-        return index
+        words = map(lambda w: w.translate(translator), doc[1].split())
+        return map(lambda t: (t[1], t[0] + 1), enumerate(words))
 
     def find(self, query=[]):
-        docs = []
-        for term in query:
-            if term in self.inverted_indexes.keys():
-                docs.append(set([t[0] for t in self.inverted_indexes[term]]))
+        terms = filter(lambda t: t in self.inverted_indexes.keys(), query)
+        docs = map(lambda term: set([t[0] for t in self.inverted_indexes[term]]), terms)
         return list(set.intersection(*docs))
 
     def find_sequential(self, query=[]):
         docs = self.find(query)
-        doc_dict = {}
+        doc_dict = defaultdict(list)
         retrieved_docs = []
-        for term in query:
-            if term in self.inverted_indexes.keys():
-                for t in [t for t in self.inverted_indexes[term] if t[0] in docs]:
-                    if t[0] in doc_dict.keys():
-                        doc_dict[t[0]].append(t[1])
-                    else:
-                        doc_dict[t[0]] = [t[1]]
+        for term in filter(lambda t: t in self.inverted_indexes.keys(), query):
+            for t in filter(lambda t: t[0] in docs, self.inverted_indexes[term]):
+                doc_dict[t[0]].append(t[1])
         for key in doc_dict.keys():
             doc_dict[key] = sorted(doc_dict[key])
             doc_dict[key] = [abs(doc_dict[key][i] - doc_dict[key][i + 1])
-                            for i in range(0, len(doc_dict[key]) - 1)]
+                             for i in range(0, len(doc_dict[key]) - 1)]
             if 1 in doc_dict[key]:
                 retrieved_docs.append(key)
         return retrieved_docs
@@ -126,7 +114,7 @@ def find_sequential(inverted_index={}, query=[]):
     for key in doc_dict.keys():
         doc_dict[key] = sorted(doc_dict[key])
         doc_dict[key] = [abs(doc_dict[key][i] - doc_dict[key][i + 1])
-                        for i in range(0, len(doc_dict[key]) - 1)]
+                         for i in range(0, len(doc_dict[key]) - 1)]
         if 1 in doc_dict[key]:
             retrieved_docs.append(key)
     return retrieved_docs
