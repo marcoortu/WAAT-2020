@@ -60,6 +60,32 @@ class InvertedIndex(object):
             index.append((word, i + 1))
         return index
 
+    def find(self, query=[]):
+        docs = []
+        for term in query:
+            if term in self.invertedIndexes.keys():
+                docs.append(set([t[0] for t in self.invertedIndexes[term]]))
+        return list(set.intersection(*docs))
+
+    def findSequential(self, query=[]):
+        docs = self.find(query)
+        docDict = {}
+        retrievedDocs = []
+        for term in query:
+            if term in self.invertedIndexes.keys():
+                for t in [t for t in self.invertedIndexes[term] if t[0] in docs]:
+                    if t[0] in docDict.keys():
+                        docDict[t[0]].append(t[1])
+                    else:
+                        docDict[t[0]] = [t[1]]
+        for key in docDict.keys():
+            docDict[key] = sorted(docDict[key])
+            docDict[key] = [abs(docDict[key][i] - docDict[key][i + 1])
+                            for i in range(0, len(docDict[key]) - 1)]
+            if 1 in docDict[key]:
+                retrievedDocs.append(key)
+        return retrievedDocs
+
 
 def getIndexOccurence(doc):
     words = doc[1].split()
