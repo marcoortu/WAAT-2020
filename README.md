@@ -1,4 +1,4 @@
-# WAAT-2019
+# WAAT-2020
 
 
 ## Esercitazione 1
