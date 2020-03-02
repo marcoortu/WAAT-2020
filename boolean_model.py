@@ -15,12 +15,28 @@ docs = [(
     che incontra chi usa uno strumento informativo automatico"""
 )]
 
+translator = str.maketrans('', '', string.punctuation)
+
+
+def tokenize(doc):
+    words = doc.split()
+    return [word.translate(translator).lower() for word in words]
+
+
+def match(query, negation=False, docs=docs):
+    tokens = {}
+    for doc in docs:
+        tokens[doc[0]] = tokenize(doc[1])
+    if negation:
+        return set([k for k in tokens.keys() if query.lower() not in tokens[k]])
+    return set([k for k in tokens.keys() if query.lower() in tokens[k]])
+
 
 class BooleanModel(object):
 
-    def __init__(self, queryString, docs=docs):
+    def __init__(self, query, docs=docs):
         self.tokens = {}
-        self.query = queryString
+        self.query = query
         self.docs = docs
         for doc in self.docs:
             self.tokens[doc[0]] = tokenize(doc[1])
@@ -40,17 +56,3 @@ class BooleanModel(object):
 
     def __str__(self):
         return " ".join(list(self.result))
-
-
-def tokenize(doc):
-    words = doc.split()
-    return [word.translate(None, string.punctuation).lower() for word in words]
-
-
-def match(query, negation=False, docs=docs):
-    tokens = {}
-    for doc in docs:
-        tokens[doc[0]] = tokenize(doc[1])
-    if negation:
-        return set([k for k in tokens.keys() if query.lower() not in tokens[k]])
-    return set([k for k in tokens.keys() if query.lower() in tokens[k]])
