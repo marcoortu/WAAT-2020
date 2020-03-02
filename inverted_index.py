@@ -33,6 +33,7 @@ doc4 = (
 
 
 class InvertedIndex(object):
+    """ Create an inverted index for text search"""
 
     def __init__(self, docs: list):
         self.inverted_indexes = defaultdict(list)
@@ -95,11 +96,11 @@ def create_inverted_index(docs=[]):
 
 def find(inverted_index={}, query=[]):
     docs = []
-    if any(map(lambda t: t not in inverted_index.keys(), query)):
-        return []
     for term in query:
         if term in inverted_index.keys():
             docs.append(set([t[0] for t in inverted_index[term]]))
+        else:
+            docs.append(set())
     return list(set.intersection(*docs))
 
 
