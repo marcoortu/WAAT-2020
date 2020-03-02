@@ -63,7 +63,6 @@ class InvertedIndex(object):
         doc_dict = {k: sorted(v) for k, v in doc_dict.items()}
         doc_dict = {k: [abs(v[i] - v[i + 1]) for i in range(0, len(v) - 1)]
                     for k, v in doc_dict.items()}
-        print(doc_dict)
         return [k for k, v in doc_dict.items() if v.count(1) == len(query) - 1]
 
 
