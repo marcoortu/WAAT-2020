@@ -64,17 +64,13 @@ class InvertedIndex(object):
 
     def find_sequential(self, query=[]):
         doc_dict = defaultdict(list)
-        retrieved_docs = []
         for term in filter(lambda t: t in self.inverted_indexes.keys(), query):
             for t in filter(lambda t: t[0] in self.find(query), self.inverted_indexes[term]):
                 doc_dict[t[0]].append(t[1])
-        for key in doc_dict.keys():
-            doc_dict[key] = sorted(doc_dict[key])
-            doc_dict[key] = [abs(doc_dict[key][i] - doc_dict[key][i + 1])
-                             for i in range(0, len(doc_dict[key]) - 1)]
-            if 1 in doc_dict[key]:
-                retrieved_docs.append(key)
-        return retrieved_docs
+        doc_dict = {k: sorted(v) for k, v in doc_dict.items()}
+        doc_dict = {k: [abs(v[i] - v[i + 1]) for i in range(0, len(v) - 1)]
+                    for k, v in doc_dict.items()}
+        return [k for k, v in doc_dict.items() if 1 in v]
 
 
 def index_occurrence(doc):
@@ -106,19 +102,13 @@ def find(inverted_index={}, query=[]):
 
 def find_sequential(inverted_index={}, query=[]):
     docs = find(inverted_index, query)
-    doc_dict = {}
-    retrieved_docs = []
-    for term in query:
-        if term in inverted_index.keys():
-            for t in [t for t in inverted_index[term] if t[0] in docs]:
-                if t[0] in doc_dict.keys():
-                    doc_dict[t[0]].append(t[1])
-                else:
-                    doc_dict[t[0]] = [t[1]]
-    for key in doc_dict.keys():
-        doc_dict[key] = sorted(doc_dict[key])
-        doc_dict[key] = [abs(doc_dict[key][i] - doc_dict[key][i + 1])
-                         for i in range(0, len(doc_dict[key]) - 1)]
-        if 1 in doc_dict[key]:
-            retrieved_docs.append(key)
-    return retrieved_docs
+    terms = filter(lambda t: t in inverted_index.keys(), query)
+    doc_dict = defaultdict(list)
+    for doc in docs:
+        for t in terms:
+            doc_dict[doc] += [i[1] for i in inverted_index[t]]
+    doc_dict = {k: sorted(v) for k, v in doc_dict.items()}
+    doc_dict = {k: [abs(v[i] - v[i + 1]) for i in range(0, len(v) - 1)]
+                for k, v in doc_dict.items()}
+    docs = [k for k, v in doc_dict.items() if 1 in v]
+    return docs
