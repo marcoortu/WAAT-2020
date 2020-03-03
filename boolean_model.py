@@ -24,12 +24,10 @@ def tokenize(doc):
 
 
 def match(query, negation=False, docs=docs):
-    tokens = {}
-    for doc in docs:
-        tokens[doc[0]] = tokenize(doc[1])
+    tokens = {doc[0]: tokenize(doc[1]) for doc in docs}
     if negation:
-        return set([k for k in tokens.keys() if query.lower() not in tokens[k]])
-    return set([k for k in tokens.keys() if query.lower() in tokens[k]])
+        return {doc for doc in tokens if query.lower() not in tokens[doc]}
+    return {doc for doc in tokens if query.lower() in tokens[doc]}
 
 
 class BooleanModel(object):
@@ -38,9 +36,8 @@ class BooleanModel(object):
         self.tokens = {}
         self.query = query
         self.docs = docs
-        for doc in self.docs:
-            self.tokens[doc[0]] = tokenize(doc[1])
-        self.result = set([k for k in self.tokens.keys() if self.query in self.tokens[k]])
+        self.tokens = {doc[0]: tokenize(doc[1]) for doc in self.docs}
+        self.result = {doc for doc in self.tokens if self.query in self.tokens[doc]}
 
     def __and__(self, other):
         self.result = set.intersection(*[self.result, other.result])
@@ -51,7 +48,7 @@ class BooleanModel(object):
         return self
 
     def __invert__(self):
-        self.result = set([k for k in self.tokens.keys() if self.query not in self.tokens[k]])
+        self.result = {doc for doc in self.tokens if self.query not in self.tokens[doc]}
         return self
 
     def __str__(self):
