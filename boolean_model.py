@@ -1,41 +1,42 @@
 import string
 
-docs = [(
-    "doc1",
-    """L'enorme quantità di informazioni presentinelle pagine Web rende necessario
-     l'uso di strumenti automatici per il recupero di informazioni"""
-), (
-    "doc2",
-    """I presenti hanno descritto le fasi del recupero dell’enorme relitto ma le 
-    informazioni non concordano su tipo e quantità di strumenti in uso"""
-), (
-    "doc3",
-    """E' stato presentato nel Web un documento che informa sulle enormi difficoltà 
-    che incontra chi usa uno strumento informativo automatico"""
-)]
+docs = (
+    (
+        "doc1",
+        """L'enorme quantità di informazioni presentinelle pagine Web rende necessario
+         l'uso di strumenti automatici per il recupero di informazioni"""
+    ), (
+        "doc2",
+        """I presenti hanno descritto le fasi del recupero dell’enorme relitto ma le 
+        informazioni non concordano su tipo e quantità di strumenti in uso"""
+    ), (
+        "doc3",
+        """E' stato presentato nel Web un documento che informa sulle enormi difficoltà 
+        che incontra chi usa uno strumento informativo automatico"""
+    )
+)
 
 translator = str.maketrans('', '', string.punctuation)
 
 
 def tokenize(doc):
-    words = doc.split()
-    return [word.translate(translator).lower() for word in words]
+    return [word.translate(translator).lower() for word in doc.split()]
 
 
-def match(query, negation=False, docs=docs):
-    tokens = {doc[0]: tokenize(doc[1]) for doc in docs}
+def match(query, negation=False, corpus=docs):
+    tokens = {doc[0]: tokenize(doc[1]) for doc in corpus}
     if negation:
         return {doc for doc in tokens if query.lower() not in tokens[doc]}
     return {doc for doc in tokens if query.lower() in tokens[doc]}
 
 
-class BooleanModel(object):
+class BooleanModel:
+    corpus = docs
 
-    def __init__(self, query, docs=docs):
+    def __init__(self, query):
         self.tokens = {}
         self.query = query
-        self.docs = docs
-        self.tokens = {doc[0]: tokenize(doc[1]) for doc in self.docs}
+        self.tokens = {doc[0]: tokenize(doc[1]) for doc in self.corpus}
         self.result = {doc for doc in self.tokens if self.query in self.tokens[doc]}
 
     def __and__(self, other):
