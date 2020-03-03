@@ -51,7 +51,7 @@ class InvertedIndex(object):
     def find(self, query=[]):
         if any(map(lambda t: t not in self.inverted_indexes.keys(), query)):
             return []
-        docs = map(lambda term: set([t[0] for t in self.inverted_indexes[term]]),
+        docs = map(lambda term: {t[0] for t in self.inverted_indexes[term]},
                    query)
         return list(set.intersection(*docs))
 
@@ -87,7 +87,7 @@ def find(inverted_index={}, query=[]):
     docs = []
     for term in query:
         if term in inverted_index.keys():
-            docs.append(set([t[0] for t in inverted_index[term]]))
+            docs.append({t[0] for t in inverted_index[term]})
         else:
             docs.append(set())
     return list(set.intersection(*docs))
