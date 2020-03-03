@@ -52,4 +52,4 @@ class BooleanModel:
         return self
 
     def __str__(self):
-        return " ".join(list(self.result))
+        return " ".join(self.result)
