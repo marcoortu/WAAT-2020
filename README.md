@@ -1,52 +1,54 @@
 # WAAT-2020
-Repository del Corso WAAT AA-2019-20
-
-## Installazione
 
 
-1. da _Pycharm_ aprire il menù *VCS*->*Checkout From Version Control*->*GitHub*
-2. selezionare _Auth Type_->*password* e inserire le credenziali del vostro account su GitHub 
-3. inserire *https://github.com/marcoortu/WAAT-2020*  nel campo *Git Reposistory Url*
+## Esercitazione 4
 
-oppure da terminale (per utenti esperti):
+Sfruttare la libreria BeautifulSoup e NetworkX per implementare una versione semplificata di un crawler e del PageRank
 
-```git
 
-    git clone https://github.com/marcoortu/WAAT-2020
-    
+### Esercizio 1
+
+La prima pagina web mai pubblicata si trova all'indirizzo *http://info.cern.ch/hypertext/WWW/TheProject.html*.
+Utilizzare Beautifulsoup per fare il crawling del web _primordiale_, utilizzando una ricerca di tipo Breadth-First con una profondità
+massima pari a 2. Ottenere un elenco di pagine a cui sono associate le pagine collegate.
+
+```python
+import requests
+from bs4 import BeautifulSoup
+
+page = requests.get('http://info.cern.ch/hypertext/WWW/TheProject.html').text
+soup = BeautifulSoup(page, "html.parser")
+
 ```
 
-Scaricato il repository, assicurarsi di avere creato il *VirtualEnv* per il progetto.
-File -> Settings -> Project Interpreter.
-- Premere sull'ingranaggio a destra del campo per selezionare il _Python Interpreter_.
-- Selezionare _Add Local_.
-- *NB* Assicurarsi in inserire la cartella corretta nel campo _Location_ e premere invio.
+### Esercizio 2
 
+Partendo dalla pagina iniziale *http://info.cern.ch/hypertext/WWW/TheProject.html* recuperare la _rete_ ottenuta nell'esercizio precedente per calcolare il PageRank delle pagine. 
 
-oppure da terminale (per utenti esperti):
-- Aprire il terminale di _PyCharm_ ed eseguire il seguente comando.
+Per calcolare il PageRank utlizzare la libreria *networkx*. Ad esempio calcolando il PageRank della seguente rete:
+![alt text](imgs/web-graph2.gif "Esempio page rank")
 
-```bash
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
+si ottiene
+- 'A': 0.183
+- 'C': 0.316
+- 'B': 0.328
+- 'D': 0.172
+
+Esempio:
+```python
+    import networkx as nx
+    import matplotlib.pyplot as plt
+    web = nx.DiGraph()
+    web.add_edges_from([
+        ('A', 'B'),
+        ('B', 'C'),
+        ('C', 'D'),
+        ('D', 'A'),
+        ('C', 'B'),
+    ])
+    nx.draw(web, with_labels=True)
+    plt.show()
+    print(nx.pagerank(web))
 ```
-Il file requirements.txt contiene la lista di tutte le librerie che serviranno durante le
-esercitazioni come ad esempio *nltk*, *numpy* etc.
 
 
-## Esercitazioni
-
-Le esercitazioni verranno inserite durante il corso come nuovi *branch* in questo repository.
-Utilizzando il *checkout* ci si può spostare nel *branch* di una particolare esercitazione.
-Per effettuare il *checkout* di un *branch* su _PyCharm_ click sul menù _Git_ in basso a destra e selezionare il branch tra quelli disponibili. I _Local Branches_ sono la lista dei branch locali di cui si è già fatto il checkout mentre i _Remote Branches_ sono tutti i _branch_ presenti nel repository remoto.
-
-- Per i _Local Branches_ selezionare l'opzione _Checkout_
-- Per i _Remote Brances_ selezionare l'opzione _Checkout as new branch_
-
-oppure da terminale (per utenti esperti):
-- Dal terminale di _Pycharm_ digitare il seguente comando per spostarsi nel *branch* della prima esercitazione.
-
-```git
-    git checkout 01-esercitazione
-```
