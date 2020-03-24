@@ -86,15 +86,15 @@ corpus = [Document(doc1[0], doc1[1]),
           Document(doc3[0], doc3[1])]
 
 
-class Vectorizer:
+class Corpus:
     corpus = corpus
 
     def __init__(self):
         self.terms = {term for doc in self.corpus for term in doc.tokenize()}
-        self.use_tfidf = True
+        self.use_tf_idf = True
 
     def vectorize(self, doc):
-        weight_function = self.tfidf_weight if self.use_tfidf else self.binary_weight
+        weight_function = self.tfidf_weight if self.use_tf_idf else self.binary_weight
         return np.array([weight_function(term, doc) for term in self.terms])
 
     def cosine_similarity(self, doc1, doc2):
@@ -104,8 +104,8 @@ class Vectorizer:
         return vector1.dot(vector2) / norm_product if norm_product else 0
 
     def binary_weight(self, term, doc):
-        documentTerms = set([word for word in doc.tokenize()])
-        return 1 if term in documentTerms else 0
+        document_terms = set([word for word in doc.tokenize()])
+        return 1 if term in document_terms else 0
 
     def tfidf_weight(self, term, document):
         corpus_term_docs = len([doc.name for doc in self.corpus if term in doc.tokenize()])
