@@ -71,9 +71,14 @@ class Document(object):
 
     def __init__(self, name, text):
         self.name, self.text = name, text
+        self.tokens = self.tokenize()
+        self.max_freq = max([self.tokens.count(t) for t in self.tokens])
 
     def tokenize(self):
         return [w.lower() for w in re.split(r'\W+', self.text) if w]
+
+    def tf(self, token):
+        return self.tokens.count(token) / self.max_freq
 
 
 corpus = [Document(doc1[0], doc1[1]),
@@ -81,7 +86,7 @@ corpus = [Document(doc1[0], doc1[1]),
           Document(doc3[0], doc3[1])]
 
 
-class Corpus:
+class Vectorizer:
     corpus = corpus
 
     def __init__(self):
@@ -103,11 +108,9 @@ class Corpus:
         return 1 if term in documentTerms else 0
 
     def tfidf_weight(self, term, document):
-        document_terms = document.tokenize()
         corpus_term_docs = len([doc.name for doc in self.corpus if term in doc.tokenize()])
-        max_term_freq = max([doc.tokenize().count(term) for doc in self.corpus])
         idf = np.log(len(self.corpus) / corpus_term_docs) if corpus_term_docs else 0
-        tf = document_terms.count(term) / max_term_freq
+        tf = document.tf(term)
         return tf * idf
 
     def rank(self, query):
