@@ -117,5 +117,4 @@ class Corpus:
     def rank(self, query):
         doc_query = Document('', query)
         ranking = [(doc.name, self.cosine_similarity(doc_query, doc)) for doc in self.corpus]
-        ranking = sorted(ranking, key=lambda r: r[1], reverse=True)
-        return ranking
+        return sorted(ranking, key=lambda r: r[1], reverse=True)
