@@ -97,8 +97,7 @@ class Corpus:
         self.use_tf_idf = True
 
     def vectorize(self, doc):
-        weight_function = lambda term: doc.tf(term) * self.idf(term) if self.use_tf_idf else doc.binary
-        return np.array([weight_function(term) for term in self.terms])
+        return np.array([self.weight(term, doc) for term in self.terms])
 
     def cosine_similarity(self, doc1, doc2):
         vector1 = self.vectorize(doc1)
@@ -109,6 +108,11 @@ class Corpus:
     def idf(self, term):
         corpus_term_docs = len([doc.name for doc in self.corpus if term in doc.tokenize()])
         return np.log(len(self.corpus) / corpus_term_docs) if corpus_term_docs else 0
+
+    def weight(self, term, doc):
+        if self.use_tf_idf:
+            return doc.tf(term) * self.idf(term)
+        return doc.binary(term)
 
     def rank(self, query):
         doc_query = Document('', query)
