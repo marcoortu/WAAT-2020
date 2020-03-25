@@ -80,6 +80,9 @@ class Document(object):
     def tf(self, token):
         return self.tokens.count(token) / self.max_freq
 
+    def binary(self, term):
+        return 1 if term in self.tokens else 0
+
 
 corpus = [Document(doc1[0], doc1[1]),
           Document(doc2[0], doc2[1]),
@@ -94,8 +97,8 @@ class Corpus:
         self.use_tf_idf = True
 
     def vectorize(self, doc):
-        weight_function = self.tfidf_weight if self.use_tf_idf else self.binary_weight
-        return np.array([weight_function(term, doc) for term in self.terms])
+        weight_function = lambda term: doc.tf(term) * self.idf(term) if self.use_tf_idf else doc.binary
+        return np.array([weight_function(term) for term in self.terms])
 
     def cosine_similarity(self, doc1, doc2):
         vector1 = self.vectorize(doc1)
@@ -103,18 +106,12 @@ class Corpus:
         norm_product = np.linalg.norm(vector1) * np.linalg.norm(vector2)
         return vector1.dot(vector2) / norm_product if norm_product else 0
 
-    def binary_weight(self, term, doc):
-        document_terms = set([word for word in doc.tokenize()])
-        return 1 if term in document_terms else 0
-
-    def tfidf_weight(self, term, document):
+    def idf(self, term):
         corpus_term_docs = len([doc.name for doc in self.corpus if term in doc.tokenize()])
-        idf = np.log(len(self.corpus) / corpus_term_docs) if corpus_term_docs else 0
-        tf = document.tf(term)
-        return tf * idf
+        return np.log(len(self.corpus) / corpus_term_docs) if corpus_term_docs else 0
 
     def rank(self, query):
         doc_query = Document('', query)
         ranking = [(doc.name, self.cosine_similarity(doc_query, doc)) for doc in self.corpus]
-        ranking = sorted(ranking, key=lambda rank: rank[1], reverse=True)
+        ranking = sorted(ranking, key=lambda r: r[1], reverse=True)
         return ranking
