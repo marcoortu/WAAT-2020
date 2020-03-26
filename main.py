@@ -17,8 +17,8 @@ if __name__ == '__main__':
     nx.draw(web_graph)
     plt.show()
     pageRanks = nx.pagerank(web_graph)
-    pageRanks = [(page.address, pageRanks[hash(page.address)]) for page in web]
-    pageRanks = sorted(pageRanks, key=lambda p: p[1], reverse=True)
-    for pageRank in pageRanks:
-        print(pageRank)
-    print(web[0].text)
+    pages = [page.set_page_rank(pageRanks[hash(page.address)]) for page in web]
+    pages = sorted(pages, key=lambda p: p.page_rank, reverse=True)
+    for page in pages:
+        print(page)
+    print(pages[0].text)

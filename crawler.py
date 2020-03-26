@@ -8,6 +8,14 @@ class Page(object):
 
     def __init__(self, address, links, text=''):
         self.address, self.links, self.text = address, links, text
+        self.page_rank = 0
+
+    def set_page_rank(self, page_rank):
+        self.page_rank = page_rank
+        return self
+
+    def __str__(self):
+        return "{}: {:.4f}".format(self.address, self.page_rank)
 
 
 class Crawler(object):
