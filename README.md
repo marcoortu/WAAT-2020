@@ -30,7 +30,7 @@ Per calcolare il PageRank utlizzare la libreria *networkx*. Ad esempio calcoland
 
 si ottiene
 - 'A': 0.155
-- 'B': 0.316
+- 'B': 0.281
 - 'C': 0.276
 - 'D': 0.281
 
