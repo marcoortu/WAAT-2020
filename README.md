@@ -29,10 +29,10 @@ Per calcolare il PageRank utlizzare la libreria *networkx*. Ad esempio calcoland
 ![alt text](imgs/web-graph2.gif "Esempio page rank")
 
 si ottiene
-- 'A': 0.183
-- 'C': 0.316
-- 'B': 0.328
-- 'D': 0.172
+- 'A': 0.155
+- 'B': 0.281
+- 'C': 0.276
+- 'D': 0.281
 
 Esempio:
 ```python
@@ -41,10 +41,10 @@ Esempio:
     web = nx.DiGraph()
     web.add_edges_from([
         ('A', 'B'),
-        ('B', 'C'),
-        ('C', 'D'),
-        ('D', 'A'),
+        ('B', 'D'),
+        ('D', 'C'),
         ('C', 'B'),
+        ('C', 'A'),
     ])
     pos = nx.circular_layout(web)
     nx.draw(web, with_labels=True, pos=pos)
