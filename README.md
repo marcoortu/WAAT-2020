@@ -46,7 +46,8 @@ Esempio:
         ('D', 'A'),
         ('C', 'B'),
     ])
-    nx.draw(web, with_labels=True)
+    pos = nx.circular_layout(web)
+    nx.draw(web, with_labels=True, pos=pos)
     plt.show()
     print(nx.pagerank(web))
 ```
