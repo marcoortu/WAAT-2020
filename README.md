@@ -54,9 +54,9 @@ Esempio:
 
 ### Esercizio 3
 
-Utilizzare il modello vettoriale con pesatura dei termini TF-IDF su tutte le pagine ottenute dal crawler definito nei punti precedenti.
+Utilizzare il modello vettoriale con pesatura dei termini TF-IDF su tutte le pagine ottenute dal crawler definito nei punti precedenti, limitando la massima profondità a 2.
 Ottenere la lista ordinata dei risultati per la query "World-Wide Web":
 
-# ordinando i risultati con la cosine similarity
-# ordinando i risultati con il pageRank
-# ordinando i risultati con il pageRank + cosine similarity
+* ordinando i risultati con la cosine similarity
+* ordinando i risultati con il pageRank
+* ordinando i risultati con il pageRank + cosine similarity
