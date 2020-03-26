@@ -59,4 +59,4 @@ Ottenere la lista ordinata dei risultati per la query "World-Wide Web":
 
 1. Ordinando i risultati con la cosine similarity
 2. Ordinando i risultati con il pageRank
-3. Ordinando i risultati con il pageRank + cosine similarity
+3. Ordinando i risultati con il cosine similarity + pageRank (ovvero a parità di CS ordinare per PR)
