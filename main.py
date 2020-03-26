@@ -7,7 +7,7 @@ from crawler import Crawler
 
 if __name__ == '__main__':
     url = urlparse('http://info.cern.ch/hypertext/WWW/TheProject.html')
-    web = Crawler(url, max_depth=2).crawl_pages(url)  # or web = crawler(url) if using functions
+    web = Crawler(url, max_depth=2).crawl_page(url)  # or web = crawler(url) if using functions
     web_graph = nx.DiGraph()
     edges = []
     for page in web:

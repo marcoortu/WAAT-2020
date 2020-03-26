@@ -16,7 +16,7 @@ class Crawler(object):
         self.start_url, self.max_depth = start_url, max_depth
         self.web = []
 
-    def crawl_pages(self, url, depth=0):
+    def crawl_page(self, url, depth=0):
         if depth >= self.max_depth:
             return self.web
         try:
@@ -34,7 +34,7 @@ class Crawler(object):
         links = list(filter(lambda l: l not in visited, set(links)))
         self.web += [Page(url.geturl(), links, soup.text)]
         for link in links:
-            self.crawl_pages(urlparse(link), depth + 1)
+            self.crawl_page(urlparse(link), depth + 1)
         return self.web
 
 
