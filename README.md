@@ -52,4 +52,11 @@ Esempio:
     print(nx.pagerank(web))
 ```
 
+### Esercizio 3
 
+Utilizzare il modello vettoriale con pesatura dei termini TF-IDF su tutte le pagine ottenute dal crawler definito nei punti precedenti, limitando la massima profondità a 2.
+Ottenere la lista ordinata dei risultati per la query "World-Wide Web":
+
+1. Ordinando i risultati con la cosine similarity
+2. Ordinando i risultati con il pageRank
+3. Ordinando i risultati con il pageRank + cosine similarity
