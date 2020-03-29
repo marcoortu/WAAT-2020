@@ -9,7 +9,7 @@ Repository del Corso WAAT AA-2019-20
     ```python
     
         import nltk
-        print(nltk.__version__) # per verificare la versione (3.4 in uso)
+        print(nltk.__version__) # per verificare la versione (3.4.5 in uso)
         nltk.download() # o nltk.download_gui() in caso di errore
     ```
 
