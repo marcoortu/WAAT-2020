@@ -1,5 +1,3 @@
-from urllib.parse import urlparse
-
 import networkx as nx
 import pylab as plt
 
