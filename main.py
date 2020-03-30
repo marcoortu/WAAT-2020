@@ -25,4 +25,3 @@ if __name__ == '__main__':
         print(page)
     print(pages[0].text)
     print(pages[0].links)
-    print(pages[0].text)
