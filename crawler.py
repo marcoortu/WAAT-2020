@@ -1,9 +1,6 @@
-import requests
-import networkx as nx
-import pylab as plt
-
 from urllib.parse import urlparse, urljoin
 
+import requests
 from bs4 import BeautifulSoup
 
 
