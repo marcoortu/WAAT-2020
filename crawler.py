@@ -46,7 +46,9 @@ class Crawler(object):
         return self.web
 
 
-def crawler(url, depth=0, max_depth=2, web=[]):
+def crawler(url, depth=0, max_depth=2, web=None):
+    if not web:
+        web = []
     depth, url.geturl()
     if depth >= max_depth:
         return web
