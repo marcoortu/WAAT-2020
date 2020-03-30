@@ -1,72 +1,70 @@
+import requests
+import networkx as nx
+import pylab as plt
+
 from urllib.parse import urlparse, urljoin
 
-import requests
 from bs4 import BeautifulSoup
 
 
-class Page(object):
+class Page:
 
-    def __init__(self, address, links, text=''):
-        self.address, self.links, self.text = address, links, text
+    def __init__(self, address):
+        self.url = urlparse(address)
+        self.address = address
         self.page_rank = 0
-
-    def set_page_rank(self, page_rank):
-        self.page_rank = page_rank
-        return self
+        self.links = {}
+        self.text = ''
+        try:
+            page = requests.get(self.url.geturl()).text
+            soup = BeautifulSoup(page, "html.parser")
+            self.links = {a['href'] for a in soup.find_all('a', href=True)}
+            self.text = soup.text
+            self._parse_urls()
+        except Exception:
+            raise ConnectionError()
 
     def __str__(self):
-        return "{}: {:.4f}".format(self.address, self.page_rank)
+        return "{}: {:.3f}".format(self.address, self.page_rank)
+
+    def __eq__(self, other):
+        return self.address == other.address
+
+    def __hash__(self):
+        return hash(self.address)
+
+    def _parse_urls(self):
+        external_links = []
+        for link in self.links:
+            external_url = urlparse(link)
+            if not external_url.netloc:
+                external_links.append(urlparse(urljoin(self.url.geturl(), external_url.path)))
+            else:
+                external_links.append(external_url)
+        self.links = {link.geturl() for link in external_links}
 
 
-class Crawler(object):
+class Crawler:
 
-    def __init__(self, start_url, max_depth=2):
-        self.start_url, self.max_depth = start_url, max_depth
-        self.web = []
+    def __init__(self, start_page, max_depth=1):
+        self.start_page, self.max_depth = start_page, max_depth
+        self.web = {start_page}
 
-    def crawl_page(self, url, depth=0):
+    def crawl_page(self, page, depth):
         if depth >= self.max_depth:
-            return self.web
-        try:
-            page = requests.get(url.geturl()).text
-        except Exception:
-            return self.web
-        soup = BeautifulSoup(page, "html.parser")
-        links = []
-        for anchor in soup.findAll('a', href=True):
-            link = urlparse(anchor['href'])
-            if not link.netloc:
-                link = urlparse(urljoin(url.geturl(), link.path))
-            links += [link.geturl()]
-        visited = set([page.address for page in self.web])
-        links = list(filter(lambda l: l not in visited, set(links)))
-        self.web += [Page(url.geturl(), links, soup.text)]
-        for link in links:
-            self.crawl_page(urlparse(link), depth + 1)
-        return self.web
+            return
+        print("{} : {}".format(depth, page.address))
+        for link in page.links:
+            if not self.visited(link):
+                try:
+                    new_page = Page(link)
+                    self.crawl_page(new_page, depth + 1)
+                    self.web.add(new_page)
+                except ConnectionError:
+                    return
 
+    def visited(self, link):
+        return link in [p.address for p in self.web]
 
-def crawler(url, depth=0, max_depth=2, web=None):
-    if not web:
-        web = []
-    depth, url.geturl()
-    if depth >= max_depth:
-        return web
-    try:
-        page = requests.get(url.geturl()).text
-    except Exception:
-        return web
-    soup = BeautifulSoup(page, "html.parser")
-    links = []
-    for anchor in soup.findAll('a', href=True):
-        link = urlparse(anchor['href'])
-        if not link.netloc:
-            link = urlparse(urljoin(url.geturl(), link.path))
-        links += [link.geturl()]
-    visited = set([page.address for page in web])
-    links = list(set(links))
-    links = list(filter(lambda l: l not in visited, links))
-    web += [Page(url.geturl(), links, soup.text)]
-    for link in links:
-        crawler(urlparse(link), depth + 1, max_depth, web)
-    return web
+    def crawl(self):
+        self.crawl_page(self.start_page, 0)
