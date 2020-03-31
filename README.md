@@ -12,6 +12,7 @@ La prima pagina web mai pubblicata si trova all'indirizzo *http://info.cern.ch/h
 Utilizzare Beautifulsoup per fare il crawling del web _primordiale_, utilizzando una ricerca di tipo Breadth-First con una profondità
 massima pari a 2. Ottenere un elenco di pagine a cui sono associate le pagine collegate.
 
+Esempio di utilizzo di Beautiful soup:
 ```python
 import requests
 from bs4 import BeautifulSoup
@@ -20,6 +21,9 @@ page = requests.get('http://info.cern.ch/hypertext/WWW/TheProject.html').text
 soup = BeautifulSoup(page, "html.parser")
 
 ```
+Architettura generale di un crawler:
+
+![alt text](imgs/crawler_architecture.png "Esempio crawler")
 
 ### Esercizio 2
 
