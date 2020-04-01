@@ -1,0 +1,201 @@
+comment_id,comment_text
+10476195,"Very nice, thanks. I'll do more extensive research on that. :-)
+"
+10221912,"Why are you passing in encoded HTML into the model?  If ng-bind-html-unsafe
+will just pass through the string to the browser.  So if you give it
+`&lt;br&gt;` then this is what the browser will get - and so will print
+<br> on the screen. If you want a line break then put ""<br>"" into the
+string.
+
+Or, are you saying that you have some encoded HTML that you want to decode
+it?  There is no directive to do that.  You could write one.
+
+On 9 November 2012 09:25, grumpyOldRussian notifications@github.com wrote:
+
+> http://plnkr.co/edit/cp1gPI?p=preview
+>
+> as far as I understand, there is no way to parse html entities into html
+> (in the plunk — render
+> as a line break). Or is there?
+>
+> —
+> Reply to this email directly or view it on GitHubhttps://github.com/angular/angular.js/issues/1545.
+"
+10237382,"I have some encoded HTML... going to write a directive myself then. Thank you. This issue can be closed I guess
+"
+10237600,"Great.  Here is a naive function for doing it: http://pranavrajyaguru.wordpress.com/2010/06/03/decode-html-through-javascript/.
+Closing for now.
+"
+10252199,"Hi Florian
+$ is used by AngularJS to indicate a hidden internal member that is not
+part of the problem domain.  Can you give a concrete use case where you
+have a problem domain field that uses $ in keys?
+You can actually get around this now with a little mapping function:
+http://plnkr.co/edit/NgdEnK?p=preview.   You could probably be more clever
+and not have to create a copy of the whole array if you wanted.
+Pete
+
+On 9 November 2012 23:38, Florian Orben notifications@github.com wrote:
+
+> See:
+> http://plnkr.co/edit/AL86RM?p=preview
+>
+> I guess the reason is, that the $$hash keys, angular is adding to some
+> objects shouldnt be printed out.
+>
+> Perhaps it should be changed, so that only keys starting with '$$' get
+> ignored, or make it configureable via an attribute, something like:
+>
+> <p ng-repeat=""d in data"" ignore=""all""> - ignores $ and $$, default behavior - </p><p ng-repeat=""d in data"" ignore=""$""> - ignores $ - </p><p ng-repeat=""d in data"" ignore=""$$""> - ignores only $$ - </p><p ng-repeat=""d in data"" ignore=""none"" [or: ignore=""false""]> - ignores nothing - </p>
+>
+> Any suggestions?
+>
+> —
+> Reply to this email directly or view it on GitHubhttps://github.com/angular/angular.js/issues/1549.
+"
+10254488,"Hi Pete,
+
+thanks four your comment and your help.
+My case was, that a json response (fetched with $http) sometimes had keys starting with $ in it - not that much of a big deal in my case (since it is only a very specific section of the response where this could happen at all - your snippet will do great here, thanks!).
+But I could imagine, there are other scenarios where this could happen more frequently (e.g. mongodb, since it's also using $ internally, or propably other apis i don't know of, could greatly rely on $) - what to do with these cases, I guess constantly ""transforming"" the data back and forth before sending it via $http isn't the best way?
+
+Florian
+"
+10259813,"In the case of MongoDB, I believe the only $ prefixed field is $oid, which is actually contained in _id so you don't iterate directly over it and in fact [""A user document element name cannot begin with ""$""](http://www.mongodb.org/display/DOCS/BSON#BSON-MongoDBDocumentTypes).
+So closing this until a more pressing requirement is put forward.
+"
+14076178,"@haraldringvold I would sugest opening a new issue if you are having one, otherwise stackexchange would be the best place to ask a more general question like this.
+"
+15675006,"I'm having the same trouble with a third party API (all the dots being removed from the callback function name). Since my search brought me here I figure adding the following snippet here might be useful for others who find themselves in the same situation.
+
+Add the following immediately before making a jsonp request.
+
+``` javascript
+var c = $window.angular.callbacks.counter.toString(36);
+
+$window['angularcallbacks_' + c] = function (data) {
+    $window.angular.callbacks['_' + c](data);
+    delete $window['angularcallbacks_' + c];
+};
+```
+
+The main problem is that this relies heavily on angular's current jsonp implementation and is likely to need maintenance in the future.
+
+As a more permanent solution the framework could have a low level service purely for registering globals (heavily and uniquely prefixed so that multiple angular apps don't collide), which would also make cleaning up after an app much simpler.
+"
+23198815,"As part of our effort to clean out old issues, this issue is being automatically closed since it has been inactivite for over two months.
+
+Please try the newest versions of Angular (`1.0.8` and `1.2.0-rc.1`), and if the issue persists, comment below so we can discuss it.
+
+Thanks!
+"
+10799697,"me too - using the windows ACS service and it doesnt like the call back name
+"
+11158494,"@raghur @todiadiyatmo do you guys know what upsets your JSONP endpoints with the callback names generated by AngularJS? Is it a dot? Or underscore? Or sth else altogether?
+
+Getting rid of a dot might be problematic since callbacks would have to be registered in a global (window) scope....
+"
+11198183,"I had the same problem with the TrustYou API. I suspect the dot being the issue ...
+I also came across the hack on stackoverflow but I decided to use jQuery.getJSON in this particular case instead
+"
+11660554,"@pkozlowski-opensource - In the Chrome network console, if I click on the url to ACS, I get an ACS error page that tells me that the callback name is invalid.
+"
+23579204,"I am getting the same issue on the CIneworld API, but I have used it without issue on other API's.
+It definitely seems as though some web services can't accept a callback name in the format ""angular.callbacks._1""
+
+It happens whether I use $http.jsonp,  $http.get or .get as part of a service with AngularJS 1.0.7 and also 1.0.8.
+
+I can use jQuery instead or the alternative fix (http://stackoverflow.com/questions/13267285/angular-resource-with-jsonp-not-working), but it would be nice to use the full features of AngularJS.
+"
+23795516,"I tested it with 1.0.8 & 1.2.0rc1 and have the same problem with both.
+"
+24968826,"This isn't working for me.
+
+version: 1.0.8
+OS: Mountain Lion
+
+I did a JSONP request on one of the file hosted at Github, like so
+
+``` javascript
+$http.json(""https://raw.github.com/<username>/<reponame>/master/somedata.json?callback=JSON_CALLBACK"")
+```
+
+ATM, the work-around mentioned by @williamtdavies worked for me
+
+cheers
+"
+24988699,"Let's move this discussion to #3073
+"
+30547918,"There's no point in merging this to #3073 because the problem caused by this bit:
+
+``` javascript
+'angular.callbacks.' + callbackId
+```
+
+which still exists in that pull request.
+That is the dots will still be in callback=... and hence not all endpoints out there in the wild will work.
+I'm using 1.2.4.
+
+(I'd like to point out that I've watch/read a few tutorials and I was impressed with angular, until I wrote
+
+``` javascript
+$resource('http://...', { ..., callback: 'JSON_CALLBACK' }, ...);
+```
+
+as my 10th ever line of angular code, now I am really disappointed!)
+"
+33129018,"This is also a problem for me.
+
+""ReferenceError: JSONP_CALLBACK is not defined"" on fully valid JSONP
+"
+48761040,"Hi!
+
+I also have the problem. An API is ignoring the provided callback if it contains a dot. I have tried @dancras workaround but it doesn't work for me because I am doing parallel requests and the first few ones will use the same callbacks and the results will be mixed for the next ones.
+"
+48761785,"Honestly, if an API can't deal with a dot or square brackets for the callback name, then that's really a bug to file on the API. You should typically only need to use JSONP in small demo applications, since larger scale apps should have the resources to set up CORS properly and avoid issues with XMLHttpRequest.
+
+Strongly advise you bring this up with the web service you're having trouble with.
+"
+48763253,"Ultimately yes, but this thread seems to show that many API have those restrictions. I am dealing with a commercial API that I am unlikely to be able to change in a short timeframe. It supports CORS but it also requires basic authentication and they didn't configure the CORS part for that (they don't allow the Authorization header and they return a wildcard as allowed origin).
+"
+48765163,"Polluting the global namespace is not really in the cards, so this is a problem for web services to deal with --- this is not an angular issue.
+"
+52480692,"While I can see @caitp's perspective:
+
+> --- this is not an angular issue.
+
+Do you not think its a good approach to try cater for environments?
+
+For example, what would jQuery be, if they just said ""this is not a jquery issue"" every time they ran into a browser issue?
+"
+52480987,"It's not a browser issue either, it's literally ""your web service needs to be a bit better and let you specify callbacks as properties of objects"". Without this, all you can do is make it call global functions on window, and I don't think it's really in the cards for angular to support this
+"
+52481781,"In an ideal world, that's true (also it's not ""our"" web service, it's third party), but there are more rigid platforms/services/companies/processes. There's no business value in making any HTTP endpoint modification to support calls from Angular, however if Angular's view is more flexible (i.e. you relax your statement and allow some exceptions when necessary) it'll be more widely used. I think there are more web services out there in the wild not supporting this than the number of seconds it may take to you fix (implement) this.
+"
+52482016,"Don't think of it as ""supporting angular"", think of it as ""supporting JSONP"".
+
+Now, arguably there is no point in supporting JSONP because it's really just a hack to avoid CORS issues, which are hopefully handled more gracefully on your web service and you should use them. But if you do want to support JSONP, then support it properly, javascript references are not always to objects in global.
+"
+52482978,"@dancras thanks for a solution however, angular uses the alphabet after 9 requests eg. `angularcallbacks_a`, which causes the solution to break
+"
+52483173,"@caitp Hmm, I think I see something in this. When you say ""your web service"" you mean the backend for my Angular browser app. Now, what if I have a third party public API which I want to write a specific app upon and I don't want to create a backend just so I can wrap all the calls and have the endpoint in the same domain (note this means maintaining my own server, quota, availability, cache, auth, etc. when the public endpoint already does all that) , while I can just use JSONP. If I create my own server (with features listed above) just for mirroring an API and working around CORS I think that's the situation Hungarians refer to as ""Shooting sparrows with a cannon"". I know in the serious business world one must have a backend because usually they write their own stuff, but there are other uses of Angular, I think.
+"
+52483201,"@blowsie what web service are you using which is doing this wrong? Is it your own web service or a third party one? If third party, file a bug, and if it's your own, fix your web service. It's really a server-side bug, not a client-side bug.
+"
+52483379,"@caitp in this case its redmine.
+http://www.redmine.org/issues/13718#change-58154
+"
+52484180,"well heres your problem: http://www.redmine.org/projects/redmine/repository/entry/trunk/lib/redmine/views/builders/json.rb#L30 --- looks like a pretty trivial patch to write, good first bug.
+"
+52484701,"@blowsie Yeah it's over a year old so I imagine a lot has changed since it was written.
+
+Perhaps a suitable solution would be to have a configurable json callback strategy object on the $httpProvider, responsible for storing and retrieving json callbacks, with the current implementation as the default strategy. That way if people are stuck using closed source, slow moving APIs they have the means to solve this issue without the majority having to suffer from a crufty solution in angular itself.
+
+It's been a while since I checked the code in this area so I couldn't say how feasible it is.
+"
+52484927,"The solution is to stop treating it as an angular bug and get your web service developers to fix their jsonp support. Really. Angular's callback routine is perfectly valid, web services are doing the wrong thing when they get this wrong, and it's not very much effort to fix it. Step up to the plate and submit a patch if it's something you care about, you know?
+"
+52485203,"Thanks @caitp I see what your saying, unfortunately submitting a patch may be out of the question, as I don't know ruby.
+"
+52485323,"Ahh missed your previous comment, It appears to be some simple regex which I could submit a patch for, thanks.
+"
