@@ -6,6 +6,4 @@ if __name__ == '__main__':
     with harvard as source:
         audio = r.record(source)
         google_text = r.recognize_google(audio)
-        sphinx_text = r.recognize_sphinx(audio)
         print(google_text)
-        print(sphinx_text)
