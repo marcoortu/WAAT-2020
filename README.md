@@ -21,17 +21,35 @@ la collection con il seguente comando:
     nltk.download('book') 
  ```
 
-## Esercizio 1
+## Esercizi
+
+Utilizzando la classe __CategorizedPlaintextCorpusReader__ è possibile
+creare un corpus di documenti a partire da una directory di base. Tutte
+le cartelle contenute nella directory di base rappresentano categorie identificate 
+dal nome della directory. 
+```python
+    from nltk.corpus import CategorizedPlaintextCorpusReader
+    root_dir = './corpora'
+    italian_authors_corpus = CategorizedPlaintextCorpusReader(
+        './%s/' % root_dir, # root directory
+        r'.*\.txt', # specifies a file patter using a regular expression -> read only .txt files
+        cat_pattern=r'(\w+)/*',  # specifies the category name using a regular expression -> the category is the name of parent directory
+        encoding='latin-1' # specifies the text encoding
+    )
+ ```
+Nell'esempio di codice riportato, partendo dalla cartella __corpora__ presente nel in questo branch, 
+viene creato un corpus di documenti contenente i due autori italiani.
+### Esercizio 1
 
 Utilizzare i testi di Grazia Deledda e Luigi Pirandello per confrontare la _concordance_ e la _similarity_
 della parola *donna*. I testi si trovano nella cartella _corpora_.
 
-## Esercizio 2
+### Esercizio 2
 
 Utilizzare i testi di Grazia Deledda e Luigi Pirandello per confrontare le 30 parole, di lunghezza maggiore a 4, più comunemente 
 utilizzate dai due autori. Le stopwords vanno filtrate prima di effettuare il calcolo.
 
-## Esercizio 3
+### Esercizio 3
 
 Ottenete una distribuzione di frequenza condizionale (per autore) per esaminare le differenze nelle lunghezze 
 delle parole utilizzare dai due autori italiani.
