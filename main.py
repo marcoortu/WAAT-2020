@@ -7,3 +7,6 @@ if __name__ == '__main__':
         audio = r.record(source)
         google_text = r.recognize_google(audio)
         print(google_text)
+        alternative_texts = r.recognize_google(audio, show_all=True)['alternative']
+        for alternative_text in alternative_texts:
+            print(alternative_text)
