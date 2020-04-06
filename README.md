@@ -1,52 +1,106 @@
 # WAAT-2020
-Repository del Corso WAAT AA-2019-20
 
-## Installazione
+Scikit-Learn esempi e tutorial da [scikit-learn.org](http://scikit-learn.org/stable/tutorial/index.html).
 
+### BOW
 
-1. da _Pycharm_ aprire il menù *VCS*->*Checkout From Version Control*->*GitHub*
-2. selezionare _Auth Type_->*password* e inserire le credenziali del vostro account su GitHub 
-3. inserire *https://github.com/marcoortu/WAAT-2020*  nel campo *Git Reposistory Url*
+#### CountVectorizer
 
-oppure da terminale (per utenti esperti):
+```python
 
-```git
+from sklearn.feature_extraction.text import CountVectorizer
+text = ["The quick brown fox jumped over the lazy dog."]
+vectorizer = CountVectorizer()
+vectorizer.fit(text)
+print(vectorizer.vocabulary_)
+vector = vectorizer.transform(text)
+print(vector.shape)
+print(type(vector))
+print(vector.toarray())
 
-    git clone https://github.com/marcoortu/WAAT-2020
-    
 ```
 
-Scaricato il repository, assicurarsi di avere creato il *VirtualEnv* per il progetto.
-File -> Settings -> Project Interpreter.
-- Premere sull'ingranaggio a destra del campo per selezionare il _Python Interpreter_.
-- Selezionare _Add Local_.
-- *NB* Assicurarsi in inserire la cartella corretta nel campo _Location_ e premere invio.
+#### TfidfVectorizer
 
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+text = ["The quick brown fox jumped over the lazy dog.",
+        "The dog.",
+        "The fox"
+]
+vectorizer = TfidfVectorizer()
+vectorizer.fit(text)
+print(vectorizer.vocabulary_)
+print(vectorizer.idf_)
+vector = vectorizer.transform([text[0]])
+print(vector.shape)
+print(vector.toarray())
 
-oppure da terminale (per utenti esperti):
-- Aprire il terminale di _PyCharm_ ed eseguire il seguente comando.
-
-```bash
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
 ```
-Il file requirements.txt contiene la lista di tutte le librerie che serviranno durante le
-esercitazioni come ad esempio *nltk*, *numpy* etc.
 
 
-## Esercitazioni
+#### HashingVectorizer
 
-Le esercitazioni verranno inserite durante il corso come nuovi *branch* in questo repository.
-Utilizzando il *checkout* ci si può spostare nel *branch* di una particolare esercitazione.
-Per effettuare il *checkout* di un *branch* su _PyCharm_ click sul menù _Git_ in basso a destra e selezionare il branch tra quelli disponibili. I _Local Branches_ sono la lista dei branch locali di cui si è già fatto il checkout mentre i _Remote Branches_ sono tutti i _branch_ presenti nel repository remoto.
+```python
+from sklearn.feature_extraction.text import HashingVectorizer
+text = ["The quick brown fox jumped over the lazy dog."]
+vectorizer = HashingVectorizer(n_features=20)
+vector = vectorizer.transform(text)
+print(vector.shape)
+print(vector.toarray())
 
-- Per i _Local Branches_ selezionare l'opzione _Checkout_
-- Per i _Remote Brances_ selezionare l'opzione _Checkout as new branch_
 
-oppure da terminale (per utenti esperti):
-- Dal terminale di _Pycharm_ digitare il seguente comando per spostarsi nel *branch* della prima esercitazione.
 
-```git
-    git checkout 01-esercitazione
 ```
+
+### Classificazione
+
+#### Support Vector Machine
+
+```python
+
+from sklearn import svm
+X = [[0, 0], [1, 1]]
+y = [0, 1]
+clf = svm.SVC()
+clf.fit(X, y)
+print clf.predict([[2., 2.]])
+
+```
+
+#### Random Forest
+
+```python
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import datasets
+
+iris = datasets.load_iris()
+X = iris.data[:, :2]
+y = iris.target
+rf = RandomForestClassifier(n_estimators=10)
+rf.fit(X, y)
+rf.predict([[5.4, 1.5], [3.6, 5.1]])
+
+```
+
+### Grid Search
+
+```python
+
+import numpy as np
+from sklearn import datasets
+from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV
+dataset = datasets.load_diabetes()
+cParams = np.array([1,2,3,4,5])
+# create and fit a ridge regression model, testing each alpha
+model = SVC()
+grid = GridSearchCV(estimator=model, param_grid=dict(C=cParams))
+grid.fit(dataset.data, dataset.target)
+print(grid)
+# summarize the results of the grid search
+print(grid.best_score_)
+print(grid.best_estimator_.C)
+```
+
