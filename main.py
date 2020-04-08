@@ -10,7 +10,7 @@ if __name__ == '__main__':
     dog = wn.synset('dog.n.01')
     graph = hyponym_graph(dog)
     graph_draw(graph)
-    # Pandas example: extraction text data from csv files
+    # Pandas example: extraction of text data from csv files
     rows = pd.read_csv("./corpora/post_comments.csv").to_dict('records')
     print(rows[0])
     print(rows[0]['comment_id'])
