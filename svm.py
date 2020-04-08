@@ -159,3 +159,4 @@ def pipe_example():
 
 if __name__ == '__main__':
     non_linear_classes()
+    pipe_example()
