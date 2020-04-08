@@ -1,52 +1,19 @@
 # WAAT-2020
-Repository del Corso WAAT AA-2019-20
 
-## Installazione
-
-
-1. da _Pycharm_ aprire il menù *VCS*->*Checkout From Version Control*->*GitHub*
-2. selezionare _Auth Type_->*password* e inserire le credenziali del vostro account su GitHub 
-3. inserire *https://github.com/marcoortu/WAAT-2020*  nel campo *Git Reposistory Url*
-
-oppure da terminale (per utenti esperti):
-
-```git
-
-    git clone https://github.com/marcoortu/WAAT-2020
-    
-```
-
-Scaricato il repository, assicurarsi di avere creato il *VirtualEnv* per il progetto.
-File -> Settings -> Project Interpreter.
-- Premere sull'ingranaggio a destra del campo per selezionare il _Python Interpreter_.
-- Selezionare _Add Local_.
-- *NB* Assicurarsi in inserire la cartella corretta nel campo _Location_ e premere invio.
+Google Analytics
 
 
-oppure da terminale (per utenti esperti):
-- Aprire il terminale di _PyCharm_ ed eseguire il seguente comando.
+## Web site
 
-```bash
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-```
-Il file requirements.txt contiene la lista di tutte le librerie che serviranno durante le
-esercitazioni come ad esempio *nltk*, *numpy* etc.
+La cartella _www/website_ contiene un sito web molto semplice con due sole pagine, costruito
+con un template HTML/CSS/JS [open source](https://startbootstrap.com/themes/grayscale/).
 
 
-## Esercitazioni
 
-Le esercitazioni verranno inserite durante il corso come nuovi *branch* in questo repository.
-Utilizzando il *checkout* ci si può spostare nel *branch* di una particolare esercitazione.
-Per effettuare il *checkout* di un *branch* su _PyCharm_ click sul menù _Git_ in basso a destra e selezionare il branch tra quelli disponibili. I _Local Branches_ sono la lista dei branch locali di cui si è già fatto il checkout mentre i _Remote Branches_ sono tutti i _branch_ presenti nel repository remoto.
+### Esercizio 1
 
-- Per i _Local Branches_ selezionare l'opzione _Checkout_
-- Per i _Remote Brances_ selezionare l'opzione _Checkout as new branch_
 
-oppure da terminale (per utenti esperti):
-- Dal terminale di _Pycharm_ digitare il seguente comando per spostarsi nel *branch* della prima esercitazione.
+Creare un nuova pagina contact.html e inserire un form di contatto (nome, cognome, email). 
+Al submit del form inviare un evento *contact* e tracciarlo tramite la pagina di Google Analytics.
 
-```git
-    git checkout 01-esercitazione
-```
+
