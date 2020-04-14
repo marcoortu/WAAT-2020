@@ -16,6 +16,7 @@ import numpy as np
 from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 import warnings
+from sklearn.tree import export_graphviz
 
 DOMAIN_STOP_WORDS = """
 trunk build commit branch patch
@@ -92,6 +93,10 @@ def decision_tree_example(criterion='entropy'):
     plt.legend(loc='upper left')
     plt.tight_layout()
     plt.show()
+
+    export_graphviz(tree,
+                    out_file='tree.dot',
+                    feature_names=['petal length', 'petal width'])
 
 
 def domain_stop_words():
