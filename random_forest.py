@@ -95,13 +95,14 @@ def decision_tree_example(criterion='entropy'):
     plt.tight_layout()
     plt.show()
 
-    # esporta l'albero decisionzale nel formato .dot
+    # export the decision tree in .dot format
     export_graphviz(tree,
                     out_file='tree.dot',
                     feature_names=['petal length', 'petal width'])
-    # per la visualizzazione dei file .dot serve installare GraphViz
+    # for .dot files visualization install GraphViz
     # (https://graphviz.gitlab.io/_pages/Download/Download_windows.html)
-    # ed eseguire il comando dot -Tpng tree.dot -o tree.png
+    # from command line execute: dot -Tpng tree.dot -o tree.png
+    # to convert the .dot file in an image file like PNG
     subprocess.call('dot -Tpng tree.dot -o tree.png', shell=True)
 
 
