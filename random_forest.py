@@ -17,6 +17,7 @@ from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 import warnings
 from sklearn.tree import export_graphviz
+import subprocess
 
 DOMAIN_STOP_WORDS = """
 trunk build commit branch patch
@@ -94,9 +95,14 @@ def decision_tree_example(criterion='entropy'):
     plt.tight_layout()
     plt.show()
 
+    # esporta l'albero decisionzale nel formato .dot
     export_graphviz(tree,
                     out_file='tree.dot',
                     feature_names=['petal length', 'petal width'])
+    # per la visualizzazione dei file .dot serve installare GraphViz
+    # (https://graphviz.gitlab.io/_pages/Download/Download_windows.html)
+    # ed eseguire il comando dot -Tpng tree.dot -o tree.png
+    subprocess.call('dot -Tpng tree.dot -o tree.png', shell=True)
 
 
 def domain_stop_words():
@@ -152,6 +158,5 @@ def random_forest_example():
 
 
 if __name__ == '__main__':
-    decision_tree_example('entropy')
-    decision_tree_example('gini')
+    decision_tree_example()
     random_forest_example()

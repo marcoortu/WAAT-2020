@@ -83,3 +83,5 @@ venv.bak/
 data/
 corpus/
 report/
+tree.dot
+tree.png
