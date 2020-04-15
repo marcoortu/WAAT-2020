@@ -68,9 +68,9 @@ def get_adjectives(url):
     :param url:
     :return:
     """
-    text = get_html_text(url)
-    tokens = tokenizer(text)
-    tokens = remove_stop_words(tokens)
-    tokens = remove_non_english_words(tokens)
-    tokens = list(set(tokens))
-    return [t[0] for t in tag_tokens(tokens) if t[1] == 'JJ']
+    text = get_html_text(url)  # 1.1
+    tokens = tokenizer(text)  # 1.2
+    tokens = remove_stop_words(tokens)  # 1.3
+    tokens = remove_non_english_words(tokens)  # 1.4
+    tokens = list(set(tokens))  # 1.5
+    return [t[0] for t in tag_tokens(tokens) if t[1] == 'JJ']  # 1.6
