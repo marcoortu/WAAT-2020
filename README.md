@@ -38,10 +38,10 @@ un classificatore di recensioni positive/negative utilizzando i seguenti due alg
     2. Random Forest
 
 Confrontare poi le performance utilizzando
-    - precision
-    - recall
-    - F1
-    - Confusion matrix
+   - precision
+   - recall
+   - F1
+   - Confusion matrix
 
 Il dataset contiene 50.000 (25.000 per il testing, 25.000 per il training) recensioni _raw_ che 
 vanno opportunamente ripulite e successivamente analizzate.
