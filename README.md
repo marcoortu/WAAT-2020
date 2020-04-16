@@ -31,8 +31,8 @@ ottenere i parametri ottimali tra:
 ## Esercizio 2
 
 Utilizzare il dataset della [Stanford University dataset](https://ai.stanford.edu/~amaas/data/sentiment/) basato sul 
-popolare sito di reviews di filrm [IMDb](https://www.imdb.com/) per effettuare una __sentiment analysis__ basata su due 
-algoritmi :
+popolare sito di reviews di film [IMDb](https://www.imdb.com/) per effettuare una __sentiment analysis__ implementando 
+un classificatore di recensioni positive/negative utilizzando i seguenti due algoritmi :
 
     1. SVM
     2. Random Forest
