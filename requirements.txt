@@ -1,2 +1,15 @@
 numpy
+scipy
+nltk
+matplotlib
+beautifulsoup4
+scikit-learn
+networkx
+textblob
+prettytable
+pandas
+tweepy
+git+https://github.com/mobolic/facebook-sdk.git#egg=facebook-sdk
+python-linkedin-v2
+pandas
 twitterscraper

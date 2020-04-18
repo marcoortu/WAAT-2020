@@ -83,3 +83,4 @@ venv.bak/
 data/
 corpus/
 report/
+credentials.py
