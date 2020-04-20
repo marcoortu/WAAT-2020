@@ -197,7 +197,7 @@ def pipe_example():
                                          ngram_range=(1, 2)
                                          )),
         ('clf', SVC(probability=True,
-                    C=0.1,
+                    C=1,
                     shrinking=True,
                     kernel='rbf'))
     ])
@@ -210,8 +210,8 @@ def pipe_example():
     y_data = [doc[1] for doc in documents]
     x_train, x_test, y_train, y_test = train_test_split(
         x_data, y_data,
-        test_size=0.33,
-        random_state=42
+        test_size=0.1,
+        # random_state=42
     )
     pipeline_clf.fit(x_train, y_train)
     y_pred = pipeline_clf.predict(x_test)
@@ -236,5 +236,5 @@ def pipe_example():
 
 
 if __name__ == '__main__':
-    # non_linear_classes()
+    non_linear_classes()
     pipe_example()
