@@ -9,9 +9,13 @@ from nltk.corpus import movie_reviews
 from nltk.corpus import wordnet as wn, stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report, accuracy_score, precision_recall_fscore_support
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
+from sklearn.metrics import confusion_matrix
+
+from sklearn.metrics import roc_curve, auc
+from scipy import interp
 
 DOMAIN_STOP_WORDS = """
 trunk build commit branch patch
@@ -123,8 +127,67 @@ class LemmaTokenizer(object):
                 wn.synsets(t)]
 
 
+def plot_ROC(pipe_clf, x_train, y_train):
+    X_train = np.array(x_train)
+    Y_train = np.array(y_train)
+
+    cv = list(StratifiedKFold(n_splits=3,
+                              random_state=1).split(X_train, Y_train))
+
+    fig = plt.figure(figsize=(7, 5))
+
+    mean_tpr = 0.0
+    mean_fpr = np.linspace(0, 1, 100)
+    all_tpr = []
+
+    for i, (train, test) in enumerate(cv):
+        probas = pipe_clf.fit(X_train[train],
+                              Y_train[train]).predict_proba(Y_train[test])
+
+        fpr, tpr, thresholds = roc_curve(Y_train[test],
+                                         probas[:, 1],
+                                         pos_label=['pos'])
+        mean_tpr += interp(mean_fpr, fpr, tpr)
+        mean_tpr[0] = 0.0
+        roc_auc = auc(fpr, tpr)
+        plt.plot(fpr,
+                 tpr,
+                 lw=1,
+                 label='ROC fold %d (area = %0.2f)'
+                       % (i + 1, roc_auc))
+
+    plt.plot([0, 1],
+             [0, 1],
+             linestyle='--',
+             color=(0.6, 0.6, 0.6),
+             label='random guessing')
+
+    mean_tpr /= len(cv)
+    mean_tpr[-1] = 1.0
+    mean_auc = auc(mean_fpr, mean_tpr)
+    plt.plot(mean_fpr, mean_tpr, 'k--',
+             label='mean ROC (area = %0.2f)' % mean_auc, lw=2)
+    plt.plot([0, 0, 1],
+             [0, 1, 1],
+             lw=2,
+             linestyle=':',
+             color='black',
+             label='perfect performance')
+
+    plt.xlim([-0.05, 1.05])
+    plt.ylim([-0.05, 1.05])
+    plt.xlabel('false positive rate')
+    plt.ylabel('true positive rate')
+    plt.title('Receiver Operator Characteristic')
+    plt.legend(loc="lower right")
+
+    plt.tight_layout()
+    # plt.savefig('./figures/roc.png', dpi=300)
+    plt.show()
+
+
 def pipe_example():
-    classifier = Pipeline([
+    pipeline_clf = Pipeline([
         ('feature_vect', TfidfVectorizer(strip_accents='unicode',
                                          tokenizer=word_tokenize,
                                          stop_words='english',
@@ -134,29 +197,44 @@ def pipe_example():
                                          ngram_range=(1, 2)
                                          )),
         ('clf', SVC(probability=True,
-                    C=10,
+                    C=0.1,
                     shrinking=True,
-                    kernel='linear'))
+                    kernel='rbf'))
     ])
     documents = [(movie_reviews.raw(fileid), category)
                  for category in movie_reviews.categories()
                  for fileid in movie_reviews.fileids(category)]
     random.shuffle(documents)
-    documents = documents[:100]
-    xData = [doc[0] for doc in documents]
-    yData = [doc[1] for doc in documents]
-    xTrain, xTest, yTrain, yTest = train_test_split(
-        xData, yData,
+    documents = documents[:500]
+    x_data = [doc[0] for doc in documents]
+    y_data = [doc[1] for doc in documents]
+    x_train, x_test, y_train, y_test = train_test_split(
+        x_data, y_data,
         test_size=0.33,
         random_state=42
     )
-    classifier.fit(xTrain, yTrain)
-    predicted = classifier.predict(xTest)
-    print(accuracy_score(yTest, predicted))
-    print(precision_recall_fscore_support(yTest, predicted))
-    print(classification_report(yTest, predicted))
+    pipeline_clf.fit(x_train, y_train)
+    y_pred = pipeline_clf.predict(x_test)
+    print(accuracy_score(y_test, y_pred))
+    print(precision_recall_fscore_support(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+
+    conf_matrix = confusion_matrix(y_true=y_test, y_pred=y_pred)
+    fig, ax = plt.subplots(figsize=(2.5, 2.5))
+    ax.matshow(conf_matrix, cmap=plt.cm.Blues, alpha=0.3)
+    for i in range(conf_matrix.shape[0]):
+        for j in range(conf_matrix.shape[1]):
+            ax.text(x=j, y=i, s=conf_matrix[i, j], va='center', ha='center')
+    print(conf_matrix)
+    plt.xlabel('y_pred label')
+    plt.ylabel('true label')
+
+    plt.tight_layout()
+    # plt.savefig('./figures/confusion_matrix.png', dpi=300)
+    plt.show()
+    plot_ROC(pipeline_clf, x_data, y_data)
 
 
 if __name__ == '__main__':
-    non_linear_classes()
+    # non_linear_classes()
     pipe_example()
