@@ -135,22 +135,14 @@ if __name__ == '__main__':
     y_test = df.loc[n_test_docs:, 'sentiment'].values
 
     # Optimization
-    # parameters = {
-    #     'vect__max_df': [0.75, 1.0],
-    #     'vect__max_features': [1000, 2000],
-    #     'vect__tokenizer': [Stemmer(), Lemmatizer(), StemmerLemmatizerPOS(), word_tokenize],
-    #     'vect__ngram_range': [[1, 1], [1, 2]],  # unigrams or bigrams
-    #     'clf__kernel': ['linear', 'rbf'],
-    #     'clf__C': [0.1, 1, 10],
-    #     'clf__probability': [True]
-    # }
     parameters = {
-        # 'vect__max_df': [0.75, 1.0],
-        'vect__max_features': [500],
-        'vect__tokenizer': [word_tokenize],
-        'vect__ngram_range': [[1, 1]],  # unigrams or bigrams
-        'clf__kernel': ['rbf'],
-        'clf__C': [10],
+        'vect__max_df': [0.75, 1.0],
+        'vect__max_features': [1000, 2000],
+        'vect__tokenizer': [Stemmer(), Lemmatizer(), StemmerLemmatizerPOS(), word_tokenize],
+        'vect__ngram_range': [[1, 1], [1, 2]],  # unigrams or bigrams
+        'clf__kernel': ['linear', 'rbf'],
+        'clf__C': [0.1, 1, 10],
+        'clf__probability': [True]
     }
 
     grid_search = GridSearchCV(
