@@ -12,6 +12,8 @@ from scipy.spatial.distance import pdist, squareform
 from scipy.cluster.hierarchy import linkage
 from scipy.cluster.hierarchy import dendrogram
 
+from lda_example import get_20newsgroups_categories
+
 
 def display_topics(model, feature_names, no_top_words):
     for topic_idx, topic in enumerate(model.components_):
@@ -90,7 +92,8 @@ def hierarchical_clustering(data=None):
 def kmeans_clustering_example(n_docs=1000, n_features=100):
     dataset = fetch_20newsgroups(shuffle=True,
                                  random_state=1,
-                                 remove=('headers', 'footers', 'quotes'))
+                                 remove=('headers', 'footers', 'quotes'),
+                                 categories=get_20newsgroups_categories(n_topics=5))
     documents = dataset.data
     tfidf_vectorizer = TfidfVectorizer(max_features=n_features,
                                        stop_words='english',
