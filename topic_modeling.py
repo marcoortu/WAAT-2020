@@ -161,5 +161,5 @@ def topic_modeling_examples(no_top_words=10):
 
 if __name__ == '__main__':
     kmeans_clustering_example(n_docs=1000, n_features=1000)
-    # topic_modeling_examples()
-    # hierarchical_clustering()
+    topic_modeling_examples()
+    hierarchical_clustering()
