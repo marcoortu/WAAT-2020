@@ -135,6 +135,7 @@ def show_topic_clusters(lda_model, corpus, n_topics=10):
     topic_num = np.argmax(arr, axis=1)
 
     # tSNE Dimension Reduction
+    # t-distributed Stochastic Neighbor Embedding
     tsne_model = TSNE(n_components=2, verbose=1, random_state=0, angle=.99, init='pca')
     tsne_lda = tsne_model.fit_transform(arr)
 
@@ -180,6 +181,7 @@ def get_20newsgroups_categories(n_topics=5):
 if __name__ == '__main__':
     n_topics = 5
     n_docs = 1000
+    no_features = 1000
     categories = get_20newsgroups_categories(n_topics=n_topics)
     print(categories)
     dataset = fetch_20newsgroups(
@@ -190,16 +192,18 @@ if __name__ == '__main__':
     )
     documents = dataset.data
     print(documents[0])
-    no_features = 1000
     data_words = list(sent_to_words(documents))[:n_docs]
     print(data_words[:1])
     # Build the bigram and trigram models
     bigram = gensim.models.Phrases(data_words, min_count=5, threshold=100)  # higher threshold fewer phrases.
     trigram = gensim.models.Phrases(bigram[data_words], threshold=100)
     bigram_mod = gensim.models.phrases.Phraser(bigram)
-    trigram_mod = gensim.models.phrases.Phraser(trigram)
-    data_ready = process_words(data_words, bigram_mod=bigram_mod,
-                               trigram_mod=trigram_mod)  # processed Text Data!
+    # trigram_mod = gensim.models.phrases.Phraser(trigram)
+    data_ready = process_words(
+        data_words,
+        bigram_mod=bigram_mod,
+        # trigram_mod=trigram_mod
+    )  # processed Text Data!
     # Create Dictionary
     id2word = corpora.Dictionary(data_ready)
     # Create Corpus: Term Document Frequency
