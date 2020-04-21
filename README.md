@@ -51,7 +51,7 @@ vanno opportunamente ripulite e successivamente analizzate.
 ## Esercizio 3
 
 Utilizziare il [20-Newsgroups](https://raw.githubusercontent.com/selva86/datasets/master/newsgroups.json) dataset
-che contiene ~11K post da 20 diversi newsgroups. Il dataset è in formato [JSON](https://it.wikipedia.org/wiki/JavaScript_Object_Notation)
+che contiene ~18K post da 20 diversi newsgroups. Il dataset è in formato [JSON](https://it.wikipedia.org/wiki/JavaScript_Object_Notation)
 e per semplicità possiamo utilizzare pandas per ottenere il dataset.
 
 ```python
@@ -59,7 +59,7 @@ import pandas as pd
 from pprint import pprint
 url = 'https://raw.githubusercontent.com/selva86/datasets/master/newsgroups.json'
 df = pd.read_json(url)
-print df.target_names.unique() 
+print(df.target_names.unique()) 
 pprint(df.head(15))
 ```
 Per accedere ai valori di righe e colonne contenute in un DataFrame in pandas fare riferimento
