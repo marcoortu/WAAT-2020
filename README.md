@@ -104,3 +104,15 @@ print(grid.best_score_)
 print(grid.best_estimator_.C)
 ```
 
+### Advanced LDA
+
+Per visualizzare gli esempi di Topic Modeling avanzata con LDA 
+eseguire Pycharm come amministratore (Windows only) e da terminale
+eseguire il seguente comando solo una volta prima di eseguire lo script
+ __lda_example.py__.
+
+```bash
+
+python -m spacy download en
+
+```

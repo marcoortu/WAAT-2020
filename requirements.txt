@@ -5,3 +5,9 @@ requests
 beautifulsoup4
 scikit-learn
 networkx
+bokeh
+seaborn
+gensim
+pyLDAvis
+spacy
+ipython
