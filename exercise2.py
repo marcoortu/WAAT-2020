@@ -20,6 +20,8 @@ from nltk.stem.snowball import SnowballStemmer
 import tarfile
 import matplotlib.pyplot as plt
 
+stemmer = SnowballStemmer("english")
+stop_words = stopwords.words('english')
 
 def load_imdb_data(basepath='corpus_imdb'):
     print("Loading dataset...")
@@ -65,11 +67,10 @@ class Stemmer(object):
         self.stemmer = SnowballStemmer("english")
 
     def __call__(self, text):
-        stop = stopwords.words('english')
         tokens = word_tokenize(text)
         tokens = [t for t in tokens
                   if t not in string.punctuation
-                  and t not in stop]
+                  and t not in stop_words]
         return [self.stemmer.stem(t) for t in tokens]
 
 
@@ -81,11 +82,10 @@ class Lemmatizer(object):
         return self.lemmatizer.lemmatize(w)
 
     def __call__(self, text):
-        stop = stopwords.words('english')
         tokens = word_tokenize(text)
         return [self.lemmatize(t) for t in tokens
                 if t not in string.punctuation
-                and t not in stop]
+                and t not in stop_words]
 
 
 class StemmerLemmatizerPOS(object):
@@ -103,27 +103,24 @@ class StemmerLemmatizerPOS(object):
         return self.unigramTagger.tag(tokens)
 
     def __call__(self, text):
-        stop = stopwords.words('english')
         tokens = word_tokenize(text)
         tokens = [t[0] for t in self.tag_tokens(tokens) if t[1] in self.allowedPostags]
         tokens = [self.lemmatize(t) for t in tokens
                   if t not in string.punctuation
-                  and t not in stop]
+                  and t not in stop_words]
         tokens = [self.stemmer.stem(t) for t in tokens]
         return tokens
 
 
 if __name__ == '__main__':
     df = load_imdb_data()
-    vectorizer = TfidfVectorizer(
-        strip_accents='unicode',
-        decode_error='ignore',
-        norm='l2',
-        ngram_range=(1, 2),
-        stop_words='english'
-    )
     pipeline_clf = Pipeline([
-        ('vect', vectorizer),
+        ('vect', TfidfVectorizer(
+            strip_accents='unicode',
+            decode_error='ignore',
+            norm='l2',
+            stop_words='english'
+        )),
         ('clf', SVC())
     ])
 
@@ -162,8 +159,7 @@ if __name__ == '__main__':
     best_parameters = grid_search.best_estimator_.get_params()
     for param_name in sorted(parameters.keys()):
         print("\t%s: %r" % (param_name, best_parameters[param_name]))
-    predicted = grid_search.predict(x_test)
-    y_pred = pipeline_clf.predict(y_test)
+    y_pred = grid_search.predict(x_test)
     print(accuracy_score(y_test, y_pred))
     print(precision_recall_fscore_support(y_test, y_pred))
     print(classification_report(y_test, y_pred))
