@@ -124,7 +124,7 @@ if __name__ == '__main__':
     )
     pipeline_clf = Pipeline([
         ('vect', vectorizer),
-        ('clf', SVC(C=1))
+        ('clf', SVC())
     ])
 
     n_train_docs = 10000
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     for param_name in sorted(parameters.keys()):
         print("\t%s: %r" % (param_name, best_parameters[param_name]))
     predicted = grid_search.predict(x_test)
-    y_pred = pipeline_clf.predict(x_test)
+    y_pred = pipeline_clf.predict(y_test)
     print(accuracy_score(y_test, y_pred))
     print(precision_recall_fscore_support(y_test, y_pred))
     print(classification_report(y_test, y_pred))
