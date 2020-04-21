@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+from nltk import word_tokenize
+from sklearn.cluster import KMeans
 
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.decomposition import NMF, LatentDirichletAllocation
@@ -85,16 +87,53 @@ def hierarchical_clustering(data=None):
     plt.show()
 
 
+def kmeans_clustering_example(n_docs=1000, n_features=100):
+    dataset = fetch_20newsgroups(shuffle=True,
+                                 random_state=1,
+                                 remove=('headers', 'footers', 'quotes'))
+    documents = dataset.data
+    tfidf_vectorizer = TfidfVectorizer(max_features=n_features,
+                                       stop_words='english',
+                                       use_idf=True,
+                                       tokenizer=word_tokenize,
+                                       ngram_range=(1, 2))
+
+    tfidf_matrix = tfidf_vectorizer.fit_transform(documents[:n_docs])
+
+    max_clusters = 10
+    sum_of_squared_distances = []
+    K = range(1, max_clusters)
+    for k in K:
+        km = KMeans(n_clusters=k)
+        km = km.fit(tfidf_matrix)
+        # inertia_: Sum of squared distances of samples to their closest cluster center.
+        sum_of_squared_distances.append(km.inertia_)
+    print(sum_of_squared_distances)
+    plt.plot(K, sum_of_squared_distances, 'bx-')
+    plt.xlabel('k')
+    plt.ylabel('Sum of Squared Distances')
+    plt.title('Elbow Method For Optimal k')
+    plt.show()
+
+
 def topic_modeling_examples(no_top_words=10):
-    dataset = fetch_20newsgroups(shuffle=True, random_state=1, remove=('headers', 'footers', 'quotes'))
+    dataset = fetch_20newsgroups(shuffle=True,
+                                 random_state=1,
+                                 remove=('headers', 'footers', 'quotes'))
     documents = dataset.data
     no_features = 1000
     # NMF is able to use tf-idf
-    tfidf_vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=no_features, stop_words='english')
+    tfidf_vectorizer = TfidfVectorizer(max_df=0.95,
+                                       min_df=2,
+                                       max_features=no_features,
+                                       stop_words='english')
     tfidf = tfidf_vectorizer.fit_transform(documents)
     tfidf_feature_names = tfidf_vectorizer.get_feature_names()
     # LDA can only use raw term counts for LDA because it is a probabilistic graphical model
-    tf_vectorizer = CountVectorizer(max_df=0.95, min_df=2, max_features=no_features, stop_words='english')
+    tf_vectorizer = CountVectorizer(max_df=0.95,
+                                    min_df=2,
+                                    max_features=no_features,
+                                    stop_words='english')
     tf = tf_vectorizer.fit_transform(documents)
     tf_feature_names = tf_vectorizer.get_feature_names()
     no_topics = 10
@@ -121,5 +160,6 @@ def topic_modeling_examples(no_top_words=10):
 
 
 if __name__ == '__main__':
+    kmeans_clustering_example(n_docs=1000, n_features=1000)
     # topic_modeling_examples()
-    hierarchical_clustering()
+    # hierarchical_clustering()
