@@ -116,3 +116,4 @@ eseguire il seguente comando solo una volta prima di eseguire lo script
 python -m spacy download en
 
 ```
+Creare una cartella con nome "report" nella root del progetto per poter salvare i file html generati dall'analisi.

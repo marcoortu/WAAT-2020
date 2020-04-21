@@ -141,7 +141,7 @@ def show_topic_clusters(lda_model, corpus, n_topics=10):
 
     # Plot the Topic Clusters using Bokeh
     output_notebook()
-    file_name = 'report/topic_modeling_only_issues.html'
+    file_name = 'report/topic_modeling_clusters.html'
     output_file(file_name)
 
     mycolors = np.array([color for name, color in mcolors.TABLEAU_COLORS.items()])
