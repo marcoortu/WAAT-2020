@@ -198,11 +198,11 @@ if __name__ == '__main__':
     bigram = gensim.models.Phrases(data_words, min_count=5, threshold=100)  # higher threshold fewer phrases.
     trigram = gensim.models.Phrases(bigram[data_words], threshold=100)
     bigram_mod = gensim.models.phrases.Phraser(bigram)
-    # trigram_mod = gensim.models.phrases.Phraser(trigram)
+    trigram_mod = gensim.models.phrases.Phraser(trigram)
     data_ready = process_words(
         data_words,
         bigram_mod=bigram_mod,
-        # trigram_mod=trigram_mod
+        trigram_mod=trigram_mod
     )  # processed Text Data!
     # Create Dictionary
     id2word = corpora.Dictionary(data_ready)
