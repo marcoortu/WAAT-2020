@@ -7,3 +7,5 @@ scikit-learn
 networkx
 pandas
 Jinja2
+pyprind
+wget

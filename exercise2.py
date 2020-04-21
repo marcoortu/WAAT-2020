@@ -1,85 +1,191 @@
-import random
+import string
 
-from nltk import word_tokenize
-from nltk.corpus import CategorizedPlaintextCorpusReader
-from sklearn.ensemble import RandomForestClassifier
+import nltk
+import pyprind
+import pandas as pd
+import os
+import numpy as np
+import wget
+from nltk import word_tokenize, WordNetLemmatizer
+from nltk.corpus import stopwords, brown
+
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report, confusion_matrix
+from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 
+from nltk.stem.snowball import SnowballStemmer
 
-def evaluate_classifier(clf, xTrain, yTrain):
-    pipeline = Pipeline([
-        ('vect', TfidfVectorizer(strip_accents='unicode',
-                                 tokenizer=word_tokenize,
-                                 stop_words='english',
-                                 decode_error='ignore',
-                                 analyzer='word',
-                                 norm='l2',
-                                 ngram_range=(1, 2)
-                                 )),
-        ('clf', clf)
-    ])
-    pipeline.fit(xTrain, yTrain)
-    predicted = pipeline.predict(xTest)
-    print(accuracy_score(yTest, predicted))
-    print(precision_recall_fscore_support(yTest, predicted))
-    print(classification_report(yTest, predicted))
-    return pipeline
+import tarfile
+import matplotlib.pyplot as plt
+
+
+def load_imdb_data(basepath='corpus_imdb'):
+    print("Loading dataset...")
+    if not os.path.exists(basepath):
+        os.mkdir(basepath)
+        file_name = 'aclImdb_v1.tar.gz'
+        url = 'https://ai.stanford.edu/~amaas/data/sentiment/{}'.format(file_name)
+        # download Stanford University dataset
+        print("downloading archive....")
+        wget.download(url, out=basepath)
+        # extract .tar.gz file to basepath directory
+    if not os.path.exists(os.path.join(basepath, 'aclImdb', 'train')):
+        file_name = 'aclImdb_v1.tar.gz'
+        with tarfile.open(os.path.join(basepath, file_name), 'r') as archive:
+            print("extracting archive....")
+            archive.extractall(path=basepath)
+    csv_dataset_file = os.path.join(basepath, 'movie_data.csv')
+    if not os.path.exists(csv_dataset_file):
+        print("creating dataframe....")
+        labels = {'pos': 1, 'neg': 0}
+        pbar = pyprind.ProgBar(50000)
+        df = pd.DataFrame()
+        for s in ('test', 'train'):
+            for l in ('pos', 'neg'):
+                path = os.path.join(basepath, 'aclImdb', s, l)
+                for file in os.listdir(path):
+                    with open(os.path.join(path, file), 'r', encoding='utf-8') as infile:
+                        txt = infile.read()
+                    df = df.append([[txt, labels[l]]], ignore_index=True)
+                    pbar.update()
+        df.columns = ['review', 'sentiment']
+        # shuffle
+        np.random.seed(0)
+        df = df.reindex(np.random.permutation(df.index))
+        df.to_csv(csv_dataset_file, index=False)
+    else:
+        df = pd.read_csv(csv_dataset_file)
+    return df
+
+
+class Stemmer(object):
+    def __init__(self):
+        self.stemmer = SnowballStemmer("english")
+
+    def __call__(self, text):
+        stop = stopwords.words('english')
+        tokens = word_tokenize(text)
+        tokens = [t for t in tokens
+                  if t not in string.punctuation
+                  and t not in stop]
+        return [self.stemmer.stem(t) for t in tokens]
+
+
+class Lemmatizer(object):
+    def __init__(self):
+        self.lemmatizer = WordNetLemmatizer()
+
+    def lemmatize(self, w):
+        return self.lemmatizer.lemmatize(w)
+
+    def __call__(self, text):
+        stop = stopwords.words('english')
+        tokens = word_tokenize(text)
+        return [self.lemmatize(t) for t in tokens
+                if t not in string.punctuation
+                and t not in stop]
+
+
+class StemmerLemmatizerPOS(object):
+    def __init__(self):
+        self.stemmer = SnowballStemmer("english")
+        self.lemmatizer = WordNetLemmatizer()
+        brown_tagged_sents = brown.tagged_sents(categories='news')
+        self.unigramTagger = nltk.UnigramTagger(brown_tagged_sents)
+        self.allowedPostags = ['NN', 'JJ', 'VBZ', 'RB']
+
+    def lemmatize(self, w):
+        return self.lemmatizer.lemmatize(w)
+
+    def tag_tokens(self, tokens):
+        return self.unigramTagger.tag(tokens)
+
+    def __call__(self, text):
+        stop = stopwords.words('english')
+        tokens = word_tokenize(text)
+        tokens = [t[0] for t in self.tag_tokens(tokens) if t[1] in self.allowedPostags]
+        tokens = [self.lemmatize(t) for t in tokens
+                  if t not in string.punctuation
+                  and t not in stop]
+        tokens = [self.stemmer.stem(t) for t in tokens]
+        return tokens
 
 
 if __name__ == '__main__':
-    spam_corpus = CategorizedPlaintextCorpusReader(
-        './corpus/',
-        r'.*\.txt',
-        cat_pattern=r'(\w+)/*',
-        encoding="latin-1"
+    df = load_imdb_data()
+    vectorizer = TfidfVectorizer(
+        strip_accents='unicode',
+        decode_error='ignore',
+        norm='l2',
+        ngram_range=(1, 2),
+        stop_words='english'
     )
+    pipeline_clf = Pipeline([
+        ('vect', vectorizer),
+        ('clf', SVC(C=1))
+    ])
 
-    documents = [(spam_corpus.raw(fileid), category)
-                 for category in spam_corpus.categories()
-                 for fileid in spam_corpus.fileids(category)]
-    random.shuffle(documents)
-    documents = documents[:1000]
-    xData = [doc[0] for doc in documents]
-    yData = [doc[1] for doc in documents]
-    xTrain, xTest, yTrain, yTest = train_test_split(
-        xData, yData,
-        test_size=0.33,
-        random_state=42
-    )
-    svm_clf = SVC(probability=True,
-                  C=10,
-                  shrinking=True,
-                  kernel='linear')
-    random_forest_clf = RandomForestClassifier(n_jobs=2,
-                                               random_state=0)
-    svm_clf = evaluate_classifier(svm_clf, xTrain, yTrain)
-    random_forest_clf = evaluate_classifier(random_forest_clf, xTrain, yTrain)
+    n_train_docs = 10000
+    n_test_docs = 1000
+    x_train = df.loc[:n_train_docs, 'review'].values
+    y_train = df.loc[:n_train_docs, 'sentiment'].values
+    x_test = df.loc[n_test_docs:, 'review'].values
+    y_test = df.loc[n_test_docs:, 'sentiment'].values
 
+    # Optimization
+    # parameters = {
+    #     'vect__max_df': [0.75, 1.0],
+    #     'vect__max_features': [1000, 2000],
+    #     'vect__tokenizer': [Stemmer(), Lemmatizer(), StemmerLemmatizerPOS(), word_tokenize],
+    #     'vect__ngram_range': [[1, 1], [1, 2]],  # unigrams or bigrams
+    #     'clf__kernel': ['linear', 'rbf'],
+    #     'clf__C': [0.1, 1, 10],
+    #     'clf__probability': [True]
+    # }
     parameters = {
-        'vect__max_df': [0.75, 1.0],
-        'vect__max_features': [1000, 2000],
-        'vect__ngram_range': [[1, 2]],
-        'clf__kernel': ['linear', 'rbf'],
-        'clf__C': [1, 10],
-        'clf__probability': [True]
+        # 'vect__max_df': [0.75, 1.0],
+        'vect__max_features': [500],
+        'vect__tokenizer': [word_tokenize],
+        'vect__ngram_range': [[1, 1]],  # unigrams or bigrams
+        'clf__kernel': ['rbf'],
+        'clf__C': [10],
     }
-    grid_search = GridSearchCV(estimator=svm_clf,
-                               param_grid=parameters)
+
+    grid_search = GridSearchCV(
+        pipeline_clf,
+        parameters,
+        verbose=1,
+        scoring='f1_micro',
+        n_jobs=4
+    )
     print("Performing grid search...")
-    print("pipeline:", [name for name, _ in svm_clf.steps])
+    print("pipeline:", [name for name, _ in pipeline_clf.steps])
     print("parameters:")
     print(parameters)
-    grid_search.fit(xTrain, yTrain)
+    grid_search.fit(x_train, y_train)
     print("Best score: %0.3f" % grid_search.best_score_)
     print("Best parameters set:")
     best_parameters = grid_search.best_estimator_.get_params()
     for param_name in sorted(parameters.keys()):
         print("\t%s: %r" % (param_name, best_parameters[param_name]))
-    predicted = grid_search.predict(xTest)
-    print(accuracy_score(yTest, predicted))
-    print(precision_recall_fscore_support(yTest, predicted))
-    print(classification_report(yTest, predicted))
+    predicted = grid_search.predict(x_test)
+    y_pred = pipeline_clf.predict(x_test)
+    print(accuracy_score(y_test, y_pred))
+    print(precision_recall_fscore_support(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+
+    conf_matrix = confusion_matrix(y_true=y_test, y_pred=y_pred)
+    fig, ax = plt.subplots(figsize=(2.5, 2.5))
+    ax.matshow(conf_matrix, cmap=plt.cm.Blues, alpha=0.3)
+    for i in range(conf_matrix.shape[0]):
+        for j in range(conf_matrix.shape[1]):
+            ax.text(x=j, y=i, s=conf_matrix[i, j], va='center', ha='center')
+    print(conf_matrix)
+    plt.xlabel('y_pred label')
+    plt.ylabel('true label')
+
+    plt.tight_layout()
+    # plt.savefig('./figures/confusion_matrix.png', dpi=300)
+    plt.show()
