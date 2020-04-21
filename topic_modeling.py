@@ -22,103 +22,6 @@ def display_topics(model, feature_names, no_top_words):
                         for i in topic.argsort()[:-no_top_words - 1:-1]]))
 
 
-def hierarchical_clustering(data=None):
-    variables = ['X', 'Y', 'Z']
-    labels = ['ID_0', 'ID_1', 'ID_2', 'ID_3', 'ID_4']
-    if not data:
-        data = np.random.random_sample([5, 3]) * 10
-    df = pd.DataFrame(data, columns=variables, index=labels)
-    row_dist = pd.DataFrame(
-        squareform(pdist(df, metric='euclidean')),
-        columns=labels,
-        index=labels
-    )
-    row_clusters = linkage(row_dist, method='complete', metric='euclidean')
-    pd.DataFrame(row_clusters,
-                 columns=['row label 1', 'row label 2',
-                          'distance', 'no. of items in clust.'],
-                 index=['cluster %d' % (i + 1)
-                        for i in range(row_clusters.shape[0])])
-    row_clusters = linkage(pdist(df, metric='euclidean'), method='complete')
-    pd.DataFrame(row_clusters,
-                 columns=['row label 1', 'row label 2',
-                          'distance', 'no. of items in clust.'],
-                 index=['cluster %d' % (i + 1)
-                        for i in range(row_clusters.shape[0])])
-
-    row_clusters = linkage(df.values, method='complete', metric='euclidean')
-    pd.DataFrame(row_clusters,
-                 columns=['row label 1', 'row label 2',
-                          'distance', 'no. of items in clust.'],
-                 index=['cluster %d' % (i + 1)
-                        for i in range(row_clusters.shape[0])])
-    row_dendr = dendrogram(row_clusters,
-                           labels=labels,
-                           # make dendrogram black (part 2/2)
-                           # color_threshold=np.inf
-                           )
-    plt.tight_layout()
-    plt.ylabel('Euclidean distance')
-    # plt.savefig('./figures/dendrogram.png', dpi=300,
-    #            bbox_inches='tight')
-    plt.show()
-    fig = plt.figure(figsize=(8, 8), facecolor='white')
-    axd = fig.add_axes([0.09, 0.1, 0.2, 0.6])
-
-    # note: for matplotlib < v1.5.1, please use orientation='right'
-    row_dendr = dendrogram(row_clusters, orientation='left')
-
-    # reorder data with respect to clustering
-    df_rowclust = df.iloc[row_dendr['leaves'][::-1]]
-
-    axd.set_xticks([])
-    axd.set_yticks([])
-
-    # remove axes spines from dendrogram
-    for i in axd.spines.values():
-        i.set_visible(False)
-
-    # plot heatmap
-    axm = fig.add_axes([0.23, 0.1, 0.6, 0.6])  # x-pos, y-pos, width, height
-    cax = axm.matshow(df_rowclust, interpolation='nearest', cmap='hot_r')
-    fig.colorbar(cax)
-    axm.set_xticklabels([''] + list(df_rowclust.columns))
-    axm.set_yticklabels([''] + list(df_rowclust.index))
-
-    # plt.savefig('./figures/heatmap.png', dpi=300)
-    plt.show()
-
-
-def kmeans_clustering_example(n_docs=1000, n_features=100):
-    dataset = fetch_20newsgroups(shuffle=True,
-                                 random_state=1,
-                                 remove=('headers', 'footers', 'quotes'),
-                                 categories=get_20newsgroups_categories(n_topics=5))
-    documents = dataset.data
-    tfidf_vectorizer = TfidfVectorizer(max_features=n_features,
-                                       stop_words='english',
-                                       use_idf=True,
-                                       tokenizer=word_tokenize,
-                                       ngram_range=(1, 2))
-
-    tfidf_matrix = tfidf_vectorizer.fit_transform(documents[:n_docs])
-
-    max_clusters = 10
-    sum_of_squared_distances = []
-    K = range(1, max_clusters)
-    for k in K:
-        km = KMeans(n_clusters=k)
-        km = km.fit(tfidf_matrix)
-        # inertia_: Sum of squared distances of samples to their closest cluster center.
-        sum_of_squared_distances.append(km.inertia_)
-    print(sum_of_squared_distances)
-    plt.plot(K, sum_of_squared_distances, 'bx-')
-    plt.xlabel('k')
-    plt.ylabel('Sum of Squared Distances')
-    plt.title('Elbow Method For Optimal k')
-    plt.show()
-
-
 def topic_modeling_examples(no_top_words=10):
     dataset = fetch_20newsgroups(shuffle=True,
                                  random_state=1,
@@ -163,6 +66,4 @@ def topic_modeling_examples(no_top_words=10):
 
 
 if __name__ == '__main__':
-    kmeans_clustering_example(n_docs=1000, n_features=1000)
-    hierarchical_clustering()
     topic_modeling_examples()
