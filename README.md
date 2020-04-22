@@ -38,7 +38,18 @@ un classificatore di recensioni positive/negative utilizzando la seguente pipeli
     2. SVC
     3. GridSearchCV
 
-Ottimizzare i parametri del vectorizer e del SVC e misurare le seguenti performance:
+Ottimizzare i parametri del vectorizer:
+    1. max idf : [0.25, 0.5, 0.75, 1.0],
+    2. max features: [None, 500, 1000, 2000],
+    3. numero n-grams: [1, 1],[1, 2]
+    4. normalizzazione (norm) : ['l1', 'l2']
+    5. tokenizer: [word_tokenizer, stemmer_tokenizer, wordnet_lemmatizer, stemmer_lemmatazier_pos_tokenizer]
+        - word_tokenizer: utilizzare quello di nltk
+        - stemmer_tokenizer: definire una funzione che applica il SnowballStemmer("english") ai token
+        - wordnet_lemmatizer: definire una funzione che applica il WordNetLemmatizer() ai token
+        - stemmer_lemmatazier_pos_tokenizer: definire una funzione che applica i passaggi precedenti ed in più applica un POS-Tagging filtrando solo  ['NN', 'JJ', 'VBZ', 'RB']
+
+Infine misurare le seguenti performance:
    - precision
    - recall
    - F1
