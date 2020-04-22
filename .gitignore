@@ -82,4 +82,6 @@ venv.bak/
 .mypy_cache/
 data/
 corpus/
+corpus_imdb/
+spam_corpus/
 report/
