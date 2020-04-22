@@ -83,3 +83,4 @@ venv.bak/
 corpus/
 corpus_imdb/
 report/
+spam_corpus/
