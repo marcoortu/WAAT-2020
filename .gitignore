@@ -84,3 +84,4 @@ corpus/
 corpus_imdb/
 report/
 spam_corpus/
+data/reviews_sentiment.arff
