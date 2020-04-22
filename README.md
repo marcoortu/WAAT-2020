@@ -1,52 +1,26 @@
-# WAAT-2020
-Repository del Corso WAAT AA-2019-20
+# WAAT-2019
 
-## Installazione
+Weka branch.
 
+## Esercizio 1
 
-1. da _Pycharm_ aprire il menù *VCS*->*Checkout From Version Control*->*GitHub*
-2. selezionare _Auth Type_->*password* e inserire le credenziali del vostro account su GitHub 
-3. inserire *https://github.com/marcoortu/WAAT-2020*  nel campo *Git Reposistory Url*
-
-oppure da terminale (per utenti esperti):
-
-```git
-
-    git clone https://github.com/marcoortu/WAAT-2020
-    
-```
-
-Scaricato il repository, assicurarsi di avere creato il *VirtualEnv* per il progetto.
-File -> Settings -> Project Interpreter.
-- Premere sull'ingranaggio a destra del campo per selezionare il _Python Interpreter_.
-- Selezionare _Add Local_.
-- *NB* Assicurarsi in inserire la cartella corretta nel campo _Location_ e premere invio.
+Utilizzare il file *data/language.arff* con almeno 3 algoritmi di classificazione e identificare quello 
+con le performance migliori per l’identificazione della lingua di un testo.
 
 
-oppure da terminale (per utenti esperti):
-- Aprire il terminale di _PyCharm_ ed eseguire il seguente comando.
 
-```bash
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-```
-Il file requirements.txt contiene la lista di tutte le librerie che serviranno durante le
-esercitazioni come ad esempio *nltk*, *numpy* etc.
+## Esercizio 2
 
+Utilizzare i *converters* forniti da Weka per creare un file _arff_ *data/reviews_sentiment.arff*. Utilizzare il dataset creato per
+creare un classificatore in grado di predire il sentiment di una review con WEKA.
 
-## Esercitazioni
+1. Creare il dataset utilizzando i conversers di Weka
 
-Le esercitazioni verranno inserite durante il corso come nuovi *branch* in questo repository.
-Utilizzando il *checkout* ci si può spostare nel *branch* di una particolare esercitazione.
-Per effettuare il *checkout* di un *branch* su _PyCharm_ click sul menù _Git_ in basso a destra e selezionare il branch tra quelli disponibili. I _Local Branches_ sono la lista dei branch locali di cui si è già fatto il checkout mentre i _Remote Branches_ sono tutti i _branch_ presenti nel repository remoto.
-
-- Per i _Local Branches_ selezionare l'opzione _Checkout_
-- Per i _Remote Brances_ selezionare l'opzione _Checkout as new branch_
-
-oppure da terminale (per utenti esperti):
-- Dal terminale di _Pycharm_ digitare il seguente comando per spostarsi nel *branch* della prima esercitazione.
-
-```git
-    git checkout 01-esercitazione
-```
+    ```bash
+    java weka.core.converters.TextDirectoryLoader -dir text_example > text_example.arff
+    ```
+2. Importare il file su Weka utilizzando l’explorer e analizzare la struttura
+3. Creare un *FilteredClassifier* composto da:
+    1. *StringToWordVector* utilizzando le trasformazioni TF e IDF
+    2. *SMO* (Sequential Minimum Optimization, implementazione del SVM) classifier
+4. Creare un esperimento con la cross validation utilizzando 10 folds e valutare le performance del classificatore.

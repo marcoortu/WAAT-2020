@@ -80,7 +80,6 @@ venv.bak/
 .ropeproject
 /site
 .mypy_cache/
-data/
 corpus/
 corpus_imdb/
 report/
