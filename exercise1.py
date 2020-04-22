@@ -32,7 +32,7 @@ def evaluate_classifier(clf, xTrain, yTrain):
 
 if __name__ == '__main__':
     spam_corpus = CategorizedPlaintextCorpusReader(
-        './corpus/',
+        './spam_corpus/',
         r'.*\.txt',
         cat_pattern=r'(\w+)/*',
         encoding="latin-1"
