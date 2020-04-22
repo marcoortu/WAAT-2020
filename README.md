@@ -26,7 +26,7 @@ Utilizzare la versione _pre-processed_ del dataset e scaricare il primo link (En
 ottenere i parametri ottimali tra:
     1. max idf : [0.25, 0.5, 0.75, 1.0],
     2. max features: [None, 500, 1000, 2000],
-    3. numero n-grams: [1, 2]
+    3. numero n-grams: [1, 1],[1, 2]
 
 ## Esercizio 2
 
