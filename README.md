@@ -32,12 +32,13 @@ ottenere i parametri ottimali tra:
 
 Utilizzare il dataset della [Stanford University dataset](https://ai.stanford.edu/~amaas/data/sentiment/) basato sul 
 popolare sito di reviews di film [IMDb](https://www.imdb.com/) per effettuare una __sentiment analysis__ implementando 
-un classificatore di recensioni positive/negative utilizzando i seguenti due algoritmi :
+un classificatore di recensioni positive/negative utilizzando la seguente pipeline :
 
-    1. SVM
-    2. Random Forest
+    1. TfidfVectorizer
+    2. SVC
+    3. GridSearchCV
 
-Confrontare poi le performance utilizzando
+Ottimizzare i parametri del vectorizer e del SVC e misurare le seguenti performance:
    - precision
    - recall
    - F1
