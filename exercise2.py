@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 stemmer = SnowballStemmer("english")
 stop_words = stopwords.words('english')
 
+
 def load_imdb_data(basepath='corpus_imdb'):
     print("Loading dataset...")
     if not os.path.exists(basepath):
@@ -118,14 +119,13 @@ if __name__ == '__main__':
         ('vect', TfidfVectorizer(
             strip_accents='unicode',
             decode_error='ignore',
-            norm='l2',
             stop_words='english'
         )),
         ('clf', SVC())
     ])
 
-    n_train_docs = 10000
-    n_test_docs = 1000
+    n_train_docs = 25000
+    n_test_docs = 25000
     x_train = df.loc[:n_train_docs, 'review'].values
     y_train = df.loc[:n_train_docs, 'sentiment'].values
     x_test = df.loc[n_test_docs:, 'review'].values
@@ -134,7 +134,8 @@ if __name__ == '__main__':
     # Optimization
     parameters = {
         'vect__max_df': [0.75, 1.0],
-        'vect__max_features': [1000, 2000],
+        'vect__norm': ['l1', 'l2'],
+        'vect__max_features': [1000, 2000, 5000],
         'vect__tokenizer': [Stemmer(), Lemmatizer(), StemmerLemmatizerPOS(), word_tokenize],
         'vect__ngram_range': [[1, 1], [1, 2]],  # unigrams or bigrams
         'clf__kernel': ['linear', 'rbf'],
