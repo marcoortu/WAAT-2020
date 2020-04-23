@@ -2,6 +2,21 @@
 
 Social Mining
 
+## Configurazione credenziali di accesso alle WEB API
+
+Creare il file credential.py nel quale inserire le credenziali 
+dei vari social media. 
+
+```python
+# Mettere qui i dati corretti per Twitter
+TWITTER_CONSUMER_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXX'
+TWITTER_CONSUMER_SECRET = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+TWITTER_ACCESS_TOKEN = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+TWITTER_ACCESS_TOKEN_SECRET = 'XXXXXXXXXXXXXXXXXXXXXXXXX'
+
+FACEBOOK_ACCESS_TOKEN = 'XXXXXXXXXXXXXXXXXXXXXXXX'
+```
+
 ## Twitter
 
 
