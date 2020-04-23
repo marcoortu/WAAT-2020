@@ -4,7 +4,7 @@ Social Mining
 
 ## Configurazione credenziali di accesso alle WEB API
 
-Creare il file credential.py nel quale inserire le credenziali 
+Creare il file credentials.py nel quale inserire le credenziali 
 dei vari social media. 
 
 ```python
