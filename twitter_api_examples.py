@@ -22,7 +22,11 @@ def clean_text(tweet):
     '''
     Regular expression that removes links and special characters from tweet.
     '''
-    return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(https?\S+)", " ", tweet).split())
+    try:
+        cleaned_tweet = ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(https?\S+)", " ", tweet).split())
+    except Exception:
+        cleaned_tweet = ''
+    return cleaned_tweet
 
 
 def get_tweet_sentiment(tweet):
