@@ -85,3 +85,4 @@ corpus/
 corpus_imdb/
 spam_corpus/
 report/
+credentials.py
