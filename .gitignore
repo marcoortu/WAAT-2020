@@ -87,3 +87,4 @@ tree.dot
 tree.png
 spam_corpus/
 corpus_imdb/
+credentials.py
